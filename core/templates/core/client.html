@@ -1,0 +1,35 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Conference Client Screen</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                text-align: center;
+                margin-top: 50px;
+            }
+
+            #currentSpeaker {
+                font-size: 2em;
+                margin-bottom: 20px;
+            }
+
+            #timer {
+                font-size: 4em;
+                font-weight: bold;
+            }
+        </style>
+    </head>
+    <body>
+        <h1 id="speaker-topic">-</h1>
+        <p id="speaker-name"></p>
+        <p id="speaker-time">00:00</p>
+
+
+
+        <script src="{% static 'core/client.js' %}"></script>
+    </body>
+</html>
