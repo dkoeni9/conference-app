@@ -58,16 +58,28 @@ def toggle_conference(request):
 
 
 @require_POST
-def set_speaker(request, speaker_id):
+def set_speaker(request, speaker_id=None):  # Добавляем значение по умолчанию
     """
     Оператор: установить текущего спикера и разослать обновление клиентам.
+    Если speaker_id пустой - снять текущего спикера.
     """
-    speaker = get_object_or_404(Speaker, id=speaker_id)
     conference, _ = Conference.objects.get_or_create()
+
+    # Если speaker_id пустой или None - снимаем спикера
+    if not speaker_id:
+        conference.speaker = None
+        conference.save()
+        broadcast_conference_update()
+        return JsonResponse(
+            {"ok": True, "speaker": None, "topic": "", "time_limit": None}
+        )
+
+    # Иначе устанавливаем спикера
+    speaker = get_object_or_404(Speaker, id=speaker_id)
     conference.speaker = speaker
-    # не меняем is_running/start_time — клиенту нужен только набор полей (имя/тема/лимит)
     conference.save()
     broadcast_conference_update()
+
     return JsonResponse(
         {
             "ok": True,

@@ -33,14 +33,16 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function setSpeakerOnServer(speakerId) {
-        if (!speakerId) return;
-        fetch(`/set_speaker/${speakerId}/`, {
+        const url = speakerId
+            ? `/set_speaker/${speakerId}/`
+            : `/set_speaker/`;
+        fetch(url, {
             method: "POST",
             headers: {
                 "X-CSRFToken": getCookie("csrftoken"),
                 "Content-Type": "application/x-www-form-urlencoded",
             },
-            body: "" // view only needs POST, no payload required
+            body: ""
         })
             .then((res) => {
                 if (!res.ok) throw new Error("set_speaker failed");
@@ -63,7 +65,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
     speakerSelect.addEventListener("change", () => {
         currentSpeakerId = speakerSelect.value;
-        if (!currentSpeakerId) return;
+        if (!currentSpeakerId) {
+            currentSpeakerElement.textContent = "Нет активного спикера";
+            if (timerInterval) clearInterval(timerInterval);
+            timerElement.textContent = "00:00";
+            setSpeakerOnServer("");
+            return;
+        }
         currentSpeakerElement.textContent = speakerSelect.selectedOptions[0].text;
         if (timerInterval) clearInterval(timerInterval);
         loadSpeakerTime(currentSpeakerId);
