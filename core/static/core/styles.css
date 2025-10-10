@@ -1,0 +1,15 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin-top: 50px;
+}
+
+#speaker-name {
+    font-size: 2em;
+    margin-bottom: 20px;
+}
+
+#speaker-time {
+    font-size: 4em;
+    font-weight: bold;
+}

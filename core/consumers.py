@@ -13,6 +13,18 @@ class ConferenceConsumer(AsyncWebsocketConsumer):
     async def disconnect(self, close_code):
         await self.channel_layer.group_discard("conference", self.channel_name)
 
+    async def receive(self, text_data):
+        """Обработка входящих сообщений от клиента"""
+        try:
+            data = json.loads(text_data)
+
+            if data.get("type") == "ping":
+                await self.send(text_data=json.dumps({"type": "pong"}))
+                return
+
+        except json.JSONDecodeError:
+            pass
+
     async def conference_update(self, event):
         await self.send_current_state()
 
@@ -30,7 +42,6 @@ class ConferenceConsumer(AsyncWebsocketConsumer):
             if time_limit is None:
                 duration = getattr(speaker, "duration", None)
                 time_limit = int(duration) * 60 if duration is not None else 0
-
             remaining = conference.calculate_remaining_time()
             return {
                 "current_speaker": speaker.full_name,
