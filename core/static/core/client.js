@@ -1,24 +1,33 @@
-import { formatTime } from "./operator.js";
+import { formatTime } from "./shared.js";
 
+
+/*
+An attempt to clear local/session storage to avoid reusing client-side persisted state.
+*/
+const CLEAR_CLIENT_STORAGE_ON_LOAD = true;
+
+// Try to clear client-side storages to avoid remembering prior UI/session state.
+if (CLEAR_CLIENT_STORAGE_ON_LOAD) {
+    try {
+        localStorage.clear();
+    } catch (e) {
+        console.warn('Could not clear localStorage', e);
+    }
+    try {
+        sessionStorage.clear();
+    } catch (e) {
+        console.warn('Could not clear sessionStorage', e);
+    }
+}
 
 function ensureLogoOverlay() {
-    let overlay = document.getElementById("logoOverlay");
+    let overlay = document.getElementById("logo-overlay");
+
     if (!overlay) {
         overlay = document.createElement("div");
-        overlay.id = "logoOverlay";
+        overlay.id = "logo-overlay";
         overlay.textContent = "Логотип";
-        Object.assign(overlay.style, {
-            position: "fixed",
-            inset: "0",
-            display: "none",
-            alignItems: "center",
-            justifyContent: "center",
-            fontSize: "96px",
-            fontWeight: "700",
-            background: "#ffffff",
-            color: "#000000",
-            zIndex: "9999",
-        });
+        overlay.style.display = "none";
         document.body.appendChild(overlay);
     }
     return overlay;
@@ -69,25 +78,25 @@ function connectWebSocket() {
 
         console.debug("📨 WS message:", data);
 
-        const nameEl = document.getElementById("speaker-name");
-        const topicEl = document.getElementById("speaker-topic");
-        const timeEl = document.getElementById("speaker-time");
+        const speakerName = document.getElementById("speaker-name");
+        const speakerTopic = document.getElementById("speaker-topic");
+        const speakerTime = document.getElementById("speaker-time");
 
         if (!data.current_speaker) {
             logoOverlay.style.display = "flex";
-            if (nameEl) nameEl.textContent = "-";
-            if (topicEl) topicEl.textContent = "-";
-            if (timeEl) timeEl.textContent = "00:00";
+            if (speakerName) speakerName.textContent = "-";
+            if (speakerTopic) speakerTopic.textContent = "-";
+            if (speakerTime) speakerTime.textContent = "00:00";
             return;
         } else {
             logoOverlay.style.display = "none";
         }
 
-        if (nameEl) nameEl.textContent = data.current_speaker || "-";
-        if (topicEl) topicEl.textContent = data.topic || "-";
+        if (speakerName) speakerName.textContent = data.current_speaker || "-";
+        if (speakerTopic) speakerTopic.textContent = data.topic || "-";
         const displaySeconds =
             data.time_limit != null ? data.time_limit : data.remaining_time || 0;
-        if (timeEl) timeEl.textContent = formatTime(displaySeconds);
+        if (speakerTime) speakerTime.textContent = formatTime(displaySeconds);
     });
 }
 

@@ -1,8 +1,4 @@
-export function formatTime(timeLimit) {
-    const minutes = Math.floor(timeLimit / 60);
-    const seconds = timeLimit % 60;
-    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-}
+import { formatTime } from "./shared.js";
 
 
 function setSpeaker(speakerId) {
@@ -26,6 +22,7 @@ function setSpeaker(speakerId) {
         })
         .catch((err) => console.error("set_speaker error:", err));
 }
+
 
 document.addEventListener("DOMContentLoaded", function () {
     const speakerSelect = document.getElementById("speaker-select");
@@ -59,8 +56,18 @@ document.addEventListener("DOMContentLoaded", function () {
     addTimeBtn.addEventListener("click", () => {
         // if (!speakerId || remainingTime === undefined) return;
         if (!speakerId) return;
+
         const extraTime = parseInt(extraTimeInput.value) || 0;
-        timer.textContent = formatTime(timeLimit + extraTime);
+        if (!extraTime) return;
+
+        timeLimit += extraTime;
+        timer.textContent = formatTime(timeLimit);
+
+        const selectedOption = speakerSelect.options[speakerSelect.selectedIndex];
+        if (selectedOption) {
+            selectedOption.dataset.timeLimit = String(timeLimit);
+        }
+
         fetch(`/update_time/${speakerId}/`, {
             method: "POST",
             headers: {
@@ -71,4 +78,47 @@ document.addEventListener("DOMContentLoaded", function () {
         });
         extraTimeInput.value = '';
     });
+
+
+    let conferenceRunning = false;
+    let timerInterval = null;
+
+    const toggleBtn = document.querySelector("#toggle-conference-button");
+
+    toggleBtn.addEventListener("click", () => {
+        if (!speakerId) return;
+
+        conferenceRunning = !conferenceRunning;
+        toggleBtn.textContent = conferenceRunning ? "Остановить" : "Запустить";
+
+        fetch(`/update_time/${speakerId}/`, {
+            method: "POST",
+            headers: {
+                'X-CSRFToken': csrftoken,
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: `action=${conferenceRunning ? "start" : "stop"}`
+        });
+
+        if (conferenceRunning) {
+            timerInterval = setInterval(() => {
+                timeLimit -= 1;
+                timer.textContent = formatTime(timeLimit);
+
+                fetch(`/update_time/${speakerId}/`, {
+                    method: "POST",
+                    headers: {
+                        'X-CSRFToken': csrftoken,
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: "action=tick"
+                });
+            }, 1000);
+        } else {
+            clearInterval(timerInterval);
+        }
+    });
 });
+
+
+

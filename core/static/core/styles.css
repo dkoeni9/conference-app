@@ -13,3 +13,20 @@ body {
     font-size: 4em;
     font-weight: bold;
 }
+
+
+/* logotype */
+
+#logo-overlay {
+    position: fixed;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-size: 96px;
+    font-weight: 700;
+    background: #ffffff;
+    color: #000000;
+    z-index: 9999;
+    display: flex;
+}

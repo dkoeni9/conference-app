@@ -11,7 +11,7 @@
     {% endfor %}
 </select>
 
-<button id="toggle-button"></button>
+<button id="toggle-conference-button">Запустить</button>
 <input type="number" id="extra-time-input" placeholder="Доп. время (сек)" />
 <button id="add-time-button">Добавить время</button>
 
@@ -21,5 +21,4 @@
 
 {% block scripts %}
 <script type="module" src="{% static 'core/operator.js' %}"></script>
-<script type="module" src="{% static 'core/toggle.js' %}"></script>
 {% endblock %}

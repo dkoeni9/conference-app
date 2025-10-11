@@ -42,18 +42,15 @@ class ConferenceConsumer(AsyncWebsocketConsumer):
             if time_limit is None:
                 duration = getattr(speaker, "duration", None)
                 time_limit = int(duration) * 60 if duration is not None else 0
-            remaining = conference.calculate_remaining_time()
             return {
                 "current_speaker": speaker.full_name,
                 "topic": getattr(speaker, "topic", ""),
                 "time_limit": int(time_limit),
-                "remaining_time": remaining,
                 "is_running": conference.is_running,
             }
         return {
             "current_speaker": None,
             "topic": None,
             "time_limit": 0,
-            "remaining_time": 0,
             "is_running": False,
         }
