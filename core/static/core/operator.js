@@ -26,13 +26,14 @@ function setSpeaker(speakerId) {
 
 document.addEventListener("DOMContentLoaded", function () {
     const speakerSelect = document.getElementById("speaker-select");
+    const timer = document.getElementById("timer");
+    const extraTimeInput = document.getElementById("extra-time-input");
+    const addTimeBtn = document.getElementById("add-time-button");
     const currentSpeaker = document.getElementById("current-speaker");
+
     let speakerId = null;
     let timeLimit = 0;
 
-    const timer = document.getElementById("timer");
-    const addTimeBtn = document.getElementById("add-time-button");
-    const extraTimeInput = document.getElementById("extra-time-input");
 
     speakerSelect.addEventListener('change', function () {
         const selectedOption = this.options[this.selectedIndex];
@@ -119,6 +120,3 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 });
-
-
-

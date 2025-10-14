@@ -1,7 +1,8 @@
-import json
-from channels.generic.websocket import AsyncWebsocketConsumer
-from .models import Conference
 from asgiref.sync import sync_to_async
+from channels.generic.websocket import AsyncWebsocketConsumer
+from datetime import timedelta
+import json
+from .models import Conference
 
 
 class ConferenceConsumer(AsyncWebsocketConsumer):
@@ -37,15 +38,12 @@ class ConferenceConsumer(AsyncWebsocketConsumer):
         conference = Conference.objects.select_related("speaker").first()
         if conference and conference.speaker:
             speaker = conference.speaker
-            # robust read of time limit (new time_limit in seconds, fallback to legacy duration in minutes)
-            time_limit = getattr(speaker, "time_limit", None)
-            if time_limit is None:
-                duration = getattr(speaker, "duration", None)
-                time_limit = int(duration) * 60 if duration is not None else 0
+            time_limit = getattr(speaker, "time_limit", timedelta(0))
+
             return {
                 "current_speaker": speaker.full_name,
                 "topic": getattr(speaker, "topic", ""),
-                "time_limit": int(time_limit),
+                "time_limit": int(time_limit.total_seconds()),
                 "is_running": conference.is_running,
             }
         return {

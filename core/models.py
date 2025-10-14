@@ -9,7 +9,25 @@ logger = logging.getLogger(__name__)
 class Speaker(models.Model):
     full_name = models.CharField(max_length=200, verbose_name="ФИО докладчика")
     topic = models.CharField(max_length=300, verbose_name="Тема выступления")
-    time_limit = models.IntegerField(default=300, verbose_name="Время (сек)")
+    time_limit = models.DurationField(
+        default=timedelta(seconds=300), verbose_name="Время"
+    )
+
+    @property
+    def time_limit_seconds(self):
+        """Возвращает время в секундах"""
+        return int(self.time_limit.total_seconds())
+
+    @property
+    def time_limit_formatted(self):
+        """Получить время в формате MM:SS"""
+        total_seconds = int(self.time_limit.total_seconds())
+        is_negative = total_seconds < 0
+        abs_seconds = abs(total_seconds)
+        minutes = abs_seconds // 60
+        seconds = abs_seconds % 60
+        formatted = f"{minutes:02d}:{seconds:02d}"
+        return f"-{formatted}" if is_negative else formatted
 
     def __str__(self):
         return f'{self.full_name.split()[0]} {self.full_name.split()[1][0]}.{self.full_name.split()[2][0]}. — "{self.topic}"'

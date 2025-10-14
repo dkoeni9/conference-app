@@ -7,7 +7,7 @@
 <select id="speaker-select">
     <option value="">Не выбран</option>
     {% for speaker in speakers %}
-    <option value="{{ speaker.id }}" data-name="{{ speaker.full_name }}" data-time-limit="{{ speaker.time_limit }}">{{ speaker.full_name }} — {{ speaker.topic }}</option>
+    <option value="{{ speaker.id }}" data-name="{{ speaker.full_name }}" data-time-limit="{{ speaker.time_limit_seconds }}" {% if speaker.id == current_speaker.id %}selected{% endif %}>{{ speaker.full_name }} — {{ speaker.topic }}</option>
     {% endfor %}
 </select>
 
@@ -15,8 +15,8 @@
 <input type="number" id="extra-time-input" placeholder="Доп. время (сек)" />
 <button id="add-time-button">Добавить время</button>
 
-<p>Выступает: <span id="current-speaker">—</span></p>
-<p>Время: <span id="timer">00:00</span></p>
+<p>Выступает: <span id="current-speaker">{{ current_speaker.full_name|default:"—" }}</span></p>
+<p>Время: <span id="timer">{{ current_speaker.time_limit_formatted|default:"00:00" }}</span></p>
 {% endblock %}
 
 {% block scripts %}
