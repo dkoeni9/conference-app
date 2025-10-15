@@ -39,9 +39,7 @@ def set_speaker(request, speaker_id=None):
                 "ok": True,
                 "speaker": None,
                 "topic": "",
-                "time_limit": int(
-                    getattr(speaker, "time_limit", timedelta()).total_seconds()
-                ),
+                "time_limit": 0,
             }
         )
 
