@@ -11,6 +11,20 @@
     {% endfor %}
 </select>
 
+<button id="delete-speaker-button">Удалить спикера</button>
+
+<h3>Добавить спикера</h3>
+
+<div id="add-speaker-form">
+    <input type="text" id="new-speaker-name" placeholder="ФИО" required>
+    <input type="text" id="new-speaker-topic" placeholder="Тема" required>
+    <input type="number" id="new-speaker-time" placeholder="Время (сек)" min="10" required>
+    <button id="add-speaker-button">Добавить</button>
+</div>
+
+
+<h3>Управление конференцией</h3>
+
 <button id="toggle-conference-button">Запустить</button>
 <input type="number" id="extra-time-input" placeholder="Доп. время (сек)" />
 <button id="add-time-button">Добавить время</button>

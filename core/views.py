@@ -6,7 +6,7 @@ from .models import Speaker, Conference
 from .utils import broadcast_conference_update
 
 
-def speaker_screen(request):
+def operator_screen(request):
     speakers = Speaker.objects.all()
     conference = Conference.objects.first()
     current_speaker = conference.speaker if conference and conference.speaker else None
@@ -22,6 +22,43 @@ def speaker_screen(request):
     )
 
 
+# @login_required
+@require_POST
+def add_speaker(request):
+    name = request.POST.get("full_name")
+    topic = request.POST.get("topic")
+    seconds = int(request.POST.get("time_limit_seconds", 0))
+
+    if not name or not topic:
+        return JsonResponse({"error": "Все поля обязательны"}, status=400)
+
+    speaker = Speaker.objects.create(
+        full_name=name,
+        topic=topic,
+        time_limit=timedelta(seconds=seconds),
+    )
+
+    return JsonResponse(
+        {
+            "id": speaker.id,
+            "full_name": speaker.full_name,
+            "topic": speaker.topic,
+            "time_limit_seconds": int(speaker.time_limit.total_seconds()),
+        }
+    )
+
+
+# @login_required
+@require_POST
+def delete_speaker(request, speaker_id):
+    speaker = get_object_or_404(Speaker, id=speaker_id)
+    speaker.delete()
+
+    broadcast_conference_update()
+
+    return JsonResponse({"success": True})
+
+
 @require_POST
 def set_speaker(request, speaker_id=None):
     """
@@ -34,6 +71,7 @@ def set_speaker(request, speaker_id=None):
         conference.speaker = None
         conference.save()
         broadcast_conference_update()
+
         return JsonResponse(
             {
                 "ok": True,

@@ -1,3 +1,7 @@
+export function csrfHeader() {
+    return { "X-CSRFToken": csrftoken, "Content-Type": "application/x-www-form-urlencoded" };
+}
+
 export function formatTime(timeLimit) {
     const sign = timeLimit < 0 ? "-" : "";
     const absTime = Math.abs(timeLimit);

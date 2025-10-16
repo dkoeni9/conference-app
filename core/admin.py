@@ -4,7 +4,7 @@ from .models import Speaker, Conference
 
 @admin.register(Speaker)
 class SpeakerAdmin(admin.ModelAdmin):
-    list_display = ("full_name", "topic", "time_limit")
+    list_display = ("id", "full_name", "topic", "time_limit")
     search_fields = ("full_name", "topic")
 
 

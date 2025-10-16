@@ -10,7 +10,7 @@ class Speaker(models.Model):
     full_name = models.CharField(max_length=200, verbose_name="ФИО докладчика")
     topic = models.CharField(max_length=300, verbose_name="Тема выступления")
     time_limit = models.DurationField(
-        default=timedelta(seconds=300), verbose_name="Время"
+        default=timedelta(seconds=300), verbose_name="Время (ЧЧ:ММ:СС)"
     )
 
     @property
