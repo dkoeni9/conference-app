@@ -1,11 +1,20 @@
 from datetime import timedelta
-from django.shortcuts import render, get_object_or_404
+from django.contrib.auth import views as auth_views
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.http import JsonResponse
+from django.shortcuts import render, get_object_or_404
+from django.urls import reverse
 from django.views.decorators.http import require_POST
 from .models import Speaker, Conference
 from .utils import broadcast_conference_update
 
 
+def is_operator(user):
+    return user.groups.filter(name="operator").exists()
+
+
+@login_required
+@user_passes_test(is_operator)
 def operator_screen(request):
     speakers = Speaker.objects.all()
     conference = Conference.objects.first()
@@ -22,7 +31,8 @@ def operator_screen(request):
     )
 
 
-# @login_required
+@login_required
+@user_passes_test(is_operator)
 @require_POST
 def add_speaker(request):
     name = request.POST.get("full_name")
@@ -48,7 +58,8 @@ def add_speaker(request):
     )
 
 
-# @login_required
+@login_required
+@user_passes_test(is_operator)
 @require_POST
 def delete_speaker(request, speaker_id):
     speaker = get_object_or_404(Speaker, id=speaker_id)
@@ -59,6 +70,8 @@ def delete_speaker(request, speaker_id):
     return JsonResponse({"success": True})
 
 
+@login_required
+@user_passes_test(is_operator)
 @require_POST
 def set_speaker(request, speaker_id=None):
     """
@@ -98,6 +111,8 @@ def set_speaker(request, speaker_id=None):
     )
 
 
+@login_required
+@user_passes_test(is_operator)
 @require_POST
 def update_time(request, speaker_id):
     """
@@ -134,5 +149,31 @@ def update_time(request, speaker_id):
         return JsonResponse({"error": "Invalid value"}, status=400)
 
 
+def is_client(user):
+    return user.groups.filter(name="client").exists()
+
+
+@login_required
+@user_passes_test(is_client)
 def client_screen(request):
     return render(request, "core/client.html")
+
+
+class CustomLoginView(auth_views.LoginView):
+    template_name = "core/login.html"
+
+    def get_success_url(self):
+        """Редирект в зависимости от роли"""
+        user = self.request.user
+
+        # if user.groups.filter(name="operator").exists() or user.is_superuser:
+        if user.groups.filter(name="operator").exists():
+            return reverse("operator_screen")
+        elif user.groups.filter(name="client").exists():
+            return reverse("client_screen")
+        else:
+            return reverse("access_denied")
+
+
+def access_denied(request):
+    return render(request, "core/access-denied.html", status=403)

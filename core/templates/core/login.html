@@ -1,0 +1,29 @@
+{% extends "core/layout.html" %}
+
+{% block title %}Войти{% endblock %}
+
+{% block main %}
+<div class="container mt-3">
+    <div class="row">
+        <div class="col">
+            <h2>Login</h2>
+
+            {% if form.errors %}
+            <div>{{ form.errors }}</div>
+            {% endif %}
+
+            <form class="mb-3" action="{% url 'login' %}" method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <input autofocus class="form-control" type="text" name="username" placeholder="Username">
+                </div>
+                <div class="mb-3">
+                    <input class="form-control" type="password" name="password" placeholder="Password">
+                </div>
+                <input class="btn btn-primary" type="submit" value="Login">
+            </form>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

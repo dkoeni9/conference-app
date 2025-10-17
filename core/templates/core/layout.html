@@ -13,7 +13,12 @@
     </head>
     <body>
         <header>
-
+            {% if user.is_authenticated %}
+            <form method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit">Сменить пользователя</button>
+            </form>
+            {% endif %}
         </header>
         <main>
             {% block main %}{% endblock %}

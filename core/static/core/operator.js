@@ -3,8 +3,8 @@ import { csrfHeader, formatTime } from "./shared.js";
 
 function setSpeaker(speakerId) {
     const url = speakerId
-        ? `/set_speaker/${speakerId}/`
-        : `/set_speaker/`;
+        ? `/set-speaker/${speakerId}/`
+        : `/set-speaker/`;
     fetch(url, {
         method: "POST",
         headers: csrfHeader(),
@@ -126,7 +126,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         // fetch("/operator/add_speaker/", {
-        fetch("/add_speaker/", {
+        fetch("/add-speaker/", {
             method: "POST",
             headers: csrfHeader(),
             body: `full_name=${encodeURIComponent(name)}&topic=${encodeURIComponent(topic)}&time_limit_seconds=${time}`
@@ -157,7 +157,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!confirm("Удалить выбранного спикера?")) return;
 
         // fetch(`/operator/delete_speaker/${id}/`, {
-        fetch(`/delete_speaker/${id}/`, {
+        fetch(`/delete-speaker/${id}/`, {
             method: "POST",
             headers: csrfHeader(),
             body: ""
