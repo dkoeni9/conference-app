@@ -20,43 +20,82 @@ function setSpeaker(speakerId) {
         .catch((err) => console.error("set_speaker error:", err));
 }
 
-function refreshSpeakerOption(speaker) {
-    const select = document.getElementById("speaker-select");
-    const option = document.createElement("option");
-    option.value = speaker.id;
-    option.dataset.name = speaker.full_name;
-    option.dataset.timeLimit = speaker.time_limit_seconds;
-    option.textContent = `${speaker.full_name} — ${speaker.topic}`;
-    select.appendChild(option);
+
+function refreshSpeakerCard(speaker) {
+    const speakerList = document.getElementById("speaker-list");
+
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "list-group-item list-group-item-action";
+    btn.dataset.id = speaker.id;
+    btn.dataset.name = speaker.full_name;
+    btn.dataset.timeLimit = speaker.time_limit_seconds;
+
+    btn.textContent = `${speaker.full_name} — ${speaker.topic}`;
+
+    const deleteSpan = document.createElement("span");
+    deleteSpan.className = "delete-speaker float-end text-danger";
+    deleteSpan.style.cursor = "pointer";
+    deleteSpan.innerHTML = "&times;";
+    btn.appendChild(deleteSpan);
+
+    speakerList.appendChild(btn);
 }
 
+
 document.addEventListener("DOMContentLoaded", function () {
-    const speakerSelect = document.getElementById("speaker-select");
+    const speakerList = document.getElementById("speaker-list");
+    const activeBtn = document.querySelector("#speaker-list .list-group-item.active");
     const toggleBtn = document.querySelector("#toggle-conference-button");
     const timer = document.getElementById("timer");
     const extraTimeInput = document.getElementById("extra-time-input");
     const addTimeBtn = document.getElementById("add-time-button");
 
-    let speakerId = speakerSelect.value || null;
-    let timeLimit = speakerSelect.selectedOptions[0]?.dataset.timeLimit || 0;
+    let speakerId = activeBtn?.dataset.id || null;
+    let timeLimit = parseInt(activeBtn?.dataset.timeLimit || "0", 10);
 
     let conferenceRunning = false;
     let timerInterval = null;
 
-    speakerSelect.addEventListener('change', function () {
-        const selectedOption = this.options[this.selectedIndex];
 
-        if (selectedOption.value) {
-            speakerId = selectedOption.value;
-            const speakerName = selectedOption.dataset.name;
-            timeLimit = parseInt(selectedOption.dataset.timeLimit);
+    speakerList.addEventListener("click", function (e) {
+        const btn = e.target.closest(".list-group-item");
+        if (!btn) return;
 
-            timer.textContent = formatTime(timeLimit);
-            setSpeaker(speakerId);
-        } else {
-            timer.textContent = '00:00';
-            setSpeaker("");
+        if (e.target.classList.contains("delete-speaker")) {
+            e.stopPropagation();
+            const speakerId = btn.dataset.id;
+            if (!speakerId) return;
+            if (!confirm("Удалить выбранного спикера?")) return;
+
+            fetch(`/delete-speaker/${speakerId}/`, {
+                method: "POST",
+                headers: csrfHeader(),
+                body: ""
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        btn.remove();
+                        alert("Спикер удалён.");
+                    } else {
+                        alert("Ошибка удаления");
+                    }
+                })
+                .catch(err => console.error("Ошибка удаления:", err));
+
+            return;
         }
+
+        document.querySelectorAll("#speaker-list .list-group-item")
+            .forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+
+        speakerId = btn.dataset.id || "";
+        timeLimit = parseInt(btn.dataset.timeLimit || "0", 10);
+
+        setSpeaker(speakerId);
+        timer.textContent = formatTime(timeLimit);
     });
 
 
@@ -69,9 +108,9 @@ document.addEventListener("DOMContentLoaded", function () {
         timeLimit += extraTime;
         timer.textContent = formatTime(timeLimit);
 
-        const selectedOption = speakerSelect.options[speakerSelect.selectedIndex];
-        if (selectedOption) {
-            selectedOption.dataset.timeLimit = String(timeLimit);
+        const activeBtn = document.querySelector("#speaker-list .list-group-item.active");
+        if (activeBtn) {
+            activeBtn.dataset.timeLimit = String(timeLimit);
         }
 
         fetch(`/update_time/${speakerId}/`, {
@@ -124,7 +163,6 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        // fetch("/operator/add_speaker/", {
         fetch("/add-speaker/", {
             method: "POST",
             headers: csrfHeader(),
@@ -136,46 +174,15 @@ document.addEventListener("DOMContentLoaded", function () {
                     alert(data.error);
                     return;
                 }
-                refreshSpeakerOption(data);
+
+                refreshSpeakerCard(data);
+
                 alert("Спикер добавлен!");
+
                 document.getElementById("new-speaker-name").value = "";
                 document.getElementById("new-speaker-topic").value = "";
                 document.getElementById("new-speaker-time").value = "";
             })
             .catch(err => console.error("Ошибка добавления:", err));
-    });
-
-
-    document.getElementById("delete-speaker-button").addEventListener("click", () => {
-        const select = document.getElementById("speaker-select");
-        const id = select.value;
-        if (!id) {
-            return;
-        }
-
-        if (!confirm("Удалить выбранного спикера?")) return;
-
-        // fetch(`/operator/delete_speaker/${id}/`, {
-        fetch(`/delete-speaker/${id}/`, {
-            method: "POST",
-            headers: csrfHeader(),
-            body: ""
-        })
-            .then(res => res.json())
-            .then(data => {
-                console.log(data);
-                if (data.success) {
-                    select.querySelector(`option[value="${id}"]`).remove();
-
-                    speakerId = null;
-                    timer.textContent = "00:00";
-                    speakerSelect.value = "";
-
-                    alert("Спикер удалён.");
-                } else {
-                    alert("Ошибка удаления");
-                }
-            })
-            .catch(err => console.error("Ошибка удаления:", err));
     });
 });

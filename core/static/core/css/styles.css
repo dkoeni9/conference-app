@@ -35,3 +35,7 @@
 .container-fluid {
     background-color: blue;
 } */
+
+.list-group-numbered > .list-group-item.no-number::before {
+    content: none;
+}

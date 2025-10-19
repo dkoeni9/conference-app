@@ -5,16 +5,21 @@
 
 {% block main %}
 <h1>Управление конференцией</h1>
-<section>
+<section class="mb-3">
     <h2>Докладчики</h2>
-    <select id="speaker-select">
-        <option value="">Не выбран</option>
-        {% for speaker in speakers %}
-        <option value="{{ speaker.id }}" data-name="{{ speaker.full_name }}" data-time-limit="{{ speaker.time_limit_seconds }}" {% if speaker.id == current_speaker.id %}selected{% endif %}>{{ speaker.full_name }} — {{ speaker.topic }}</option>
-        {% endfor %}
-    </select>
 
-    <button id="delete-speaker-button" class="btn btn-danger">Удалить спикера</button>
+    <div id="speaker-list" class="list-group list-group-numbered">
+        <button type="button" class="list-group-item list-group-item-action {% if not current_speaker %}active{% endif %} no-number" data-id="" data-name="" data-time-limit="0">
+            Не выбран
+        </button>
+
+        {% for speaker in speakers %}
+        <button type="button" class="list-group-item list-group-item-action {% if speaker.id == current_speaker.id %}active{% endif %}" data-id="{{ speaker.id }}" data-name="{{ speaker.full_name }}" data-time-limit="{{ speaker.time_limit_seconds }}">
+            {{ speaker.full_name }} — {{ speaker.topic }} — {{ speaker.time_limit_formatted }}
+            <span class="delete-speaker float-end text-danger" style="cursor:pointer;">&times;</span>
+        </button>
+        {% endfor %}
+    </div>
 </section>
 
 <section>
