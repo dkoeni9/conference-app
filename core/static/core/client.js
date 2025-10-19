@@ -49,7 +49,7 @@ function connectWebSocket() {
         console.info("✅ WS connected");
         reconnectAttempts = 0;
 
-        // Ping каждые 25 секунд (меньше типичного тайм-аута 30-60 сек)
+        // Ping every 25 seconds 
         pingInterval = setInterval(() => {
             if (ws.readyState === WebSocket.OPEN) {
                 ws.send(JSON.stringify({ type: "ping" }));
@@ -73,7 +73,6 @@ function connectWebSocket() {
     ws.addEventListener("message", (ev) => {
         const data = JSON.parse(ev.data);
 
-        // Игнорируем pong
         if (data.type === "pong") return;
 
         console.debug("📨 WS message:", data);
@@ -100,10 +99,8 @@ function connectWebSocket() {
     });
 }
 
-// Запуск
 connectWebSocket();
 
-// Очистка при закрытии страницы
 window.addEventListener("beforeunload", () => {
     clearInterval(pingInterval);
     if (ws) ws.close();

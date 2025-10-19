@@ -10,7 +10,7 @@ from .utils import broadcast_conference_update
 
 
 def is_operator(user):
-    return user.groups.filter(name="operator").exists()
+    return user.groups.filter(name="operator").exists() or user.is_superuser
 
 
 @login_required
@@ -166,10 +166,9 @@ class CustomLoginView(auth_views.LoginView):
         """Редирект в зависимости от роли"""
         user = self.request.user
 
-        # if user.groups.filter(name="operator").exists() or user.is_superuser:
-        if user.groups.filter(name="operator").exists():
+        if is_operator(user):
             return reverse("operator_screen")
-        elif user.groups.filter(name="client").exists():
+        elif is_client(user):
             return reverse("client_screen")
         else:
             return reverse("access_denied")

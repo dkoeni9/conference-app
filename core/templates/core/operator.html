@@ -4,33 +4,39 @@
 {% block title %}Оператор{% endblock %}
 
 {% block main %}
-<select id="speaker-select">
-    <option value="">Не выбран</option>
-    {% for speaker in speakers %}
-    <option value="{{ speaker.id }}" data-name="{{ speaker.full_name }}" data-time-limit="{{ speaker.time_limit_seconds }}" {% if speaker.id == current_speaker.id %}selected{% endif %}>{{ speaker.full_name }} — {{ speaker.topic }}</option>
-    {% endfor %}
-</select>
+<h1>Управление конференцией</h1>
+<section>
+    <h2>Докладчики</h2>
+    <select id="speaker-select">
+        <option value="">Не выбран</option>
+        {% for speaker in speakers %}
+        <option value="{{ speaker.id }}" data-name="{{ speaker.full_name }}" data-time-limit="{{ speaker.time_limit_seconds }}" {% if speaker.id == current_speaker.id %}selected{% endif %}>{{ speaker.full_name }} — {{ speaker.topic }}</option>
+        {% endfor %}
+    </select>
 
-<button id="delete-speaker-button">Удалить спикера</button>
+    <button id="delete-speaker-button" class="btn btn-danger">Удалить спикера</button>
+</section>
 
-<h3>Добавить спикера</h3>
+<section>
+    <h2>Таймер</h2>
+    <p>Время: <span id="timer">{{ current_speaker.time_limit_formatted|default:"00:00" }}</span></p>
 
-<div id="add-speaker-form">
-    <input type="text" id="new-speaker-name" placeholder="ФИО" required>
-    <input type="text" id="new-speaker-topic" placeholder="Тема" required>
-    <input type="number" id="new-speaker-time" placeholder="Время (сек)" min="10" required>
-    <button id="add-speaker-button">Добавить</button>
-</div>
+    <button id="toggle-conference-button" class="btn btn-success">Запустить</button>
+    <input type="number" id="extra-time-input" placeholder="Доп. время (сек)" />
+    <button id="add-time-button" class="btn btn-primary">Добавить время</button>
 
+</section>
 
-<h3>Управление конференцией</h3>
+<section>
+    <h2>Добавить докладчика</h2>
 
-<button id="toggle-conference-button">Запустить</button>
-<input type="number" id="extra-time-input" placeholder="Доп. время (сек)" />
-<button id="add-time-button">Добавить время</button>
-
-<p>Выступает: <span id="current-speaker">{{ current_speaker.full_name|default:"—" }}</span></p>
-<p>Время: <span id="timer">{{ current_speaker.time_limit_formatted|default:"00:00" }}</span></p>
+    <div id="add-speaker-form" class="mb-3">
+        <input type="text" id="new-speaker-name" class="form-control" placeholder="ФИО" required>
+        <input type="text" id="new-speaker-topic" class="form-control" placeholder="Тема" required>
+        <input type="number" id="new-speaker-time" class="form-control" placeholder="Время (сек)" min="10" required>
+        <button id="add-speaker-button" class="btn btn-primary">Добавить</button>
+    </div>
+</section>
 {% endblock %}
 
 {% block scripts %}

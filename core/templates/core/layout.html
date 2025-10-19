@@ -6,26 +6,33 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>{% block title %}Конференция{% endblock %}</title>
-        <link rel="stylesheet" href="{% static 'core/styles.css' %}">
+        <link rel="stylesheet" href="{% static 'core/css/bootstrap.min.css' %}">
+        <link rel="stylesheet" href="{% static 'core/css/styles.css' %}">
         <script>
             var csrftoken = '{{ csrf_token }}';
         </script>
     </head>
     <body>
         <header>
-            {% if user.is_authenticated %}
-            <form method="post" action="{% url 'logout' %}">
-                {% csrf_token %}
-                <button type="submit">Сменить пользователя</button>
-            </form>
-            {% endif %}
+            <nav class="navbar navbar-expand-lg">
+                <div class="container-fluid justify-content-end">
+                    {% if user.is_authenticated %}
+                    <form method="post" action="{% url 'logout' %}" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-light">Сменить пользователя</button>
+                    </form>
+                    {% endif %}
+                </div>
+            </nav>
         </header>
-        <main>
+
+        <main class="container">
             {% block main %}{% endblock %}
         </main>
         <footer>
 
         </footer>
+        <script src="{% static 'core/js/bootstrap.bundle.min.js' %}"></script>
         {% block scripts %}{% endblock %}
     </body>
 </html>

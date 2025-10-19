@@ -36,10 +36,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const timer = document.getElementById("timer");
     const extraTimeInput = document.getElementById("extra-time-input");
     const addTimeBtn = document.getElementById("add-time-button");
-    const currentSpeaker = document.getElementById("current-speaker");
 
-    let speakerId = null;
-    let timeLimit = 0;
+    let speakerId = speakerSelect.value || null;
+    let timeLimit = speakerSelect.selectedOptions[0]?.dataset.timeLimit || 0;
 
     let conferenceRunning = false;
     let timerInterval = null;
@@ -52,11 +51,9 @@ document.addEventListener("DOMContentLoaded", function () {
             const speakerName = selectedOption.dataset.name;
             timeLimit = parseInt(selectedOption.dataset.timeLimit);
 
-            currentSpeaker.textContent = speakerName;
             timer.textContent = formatTime(timeLimit);
             setSpeaker(speakerId);
         } else {
-            currentSpeaker.textContent = '—';
             timer.textContent = '00:00';
             setSpeaker("");
         }
@@ -91,6 +88,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
         conferenceRunning = !conferenceRunning;
         toggleBtn.textContent = conferenceRunning ? "Остановить" : "Запустить";
+        toggleBtn.classList.toggle("btn-danger", conferenceRunning);
+        toggleBtn.classList.toggle("btn-success", !conferenceRunning);
 
         fetch(`/update_time/${speakerId}/`, {
             method: "POST",
@@ -169,7 +168,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     select.querySelector(`option[value="${id}"]`).remove();
 
                     speakerId = null;
-                    currentSpeaker.textContent = "—";
                     timer.textContent = "00:00";
                     speakerSelect.value = "";
 
