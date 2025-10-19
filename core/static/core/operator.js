@@ -31,7 +31,7 @@ function refreshSpeakerCard(speaker) {
     btn.dataset.name = speaker.full_name;
     btn.dataset.timeLimit = speaker.time_limit_seconds;
 
-    btn.textContent = `${speaker.full_name} — ${speaker.topic}`;
+    btn.textContent = `${speaker.full_name} — ${speaker.topic} — ${formatTime(speaker.time_limit_seconds)}`;
 
     const deleteSpan = document.createElement("span");
     deleteSpan.className = "delete-speaker float-end text-danger";
