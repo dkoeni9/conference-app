@@ -20,20 +20,10 @@ if (CLEAR_CLIENT_STORAGE_ON_LOAD) {
     }
 }
 
-function ensureLogoOverlay() {
-    let overlay = document.getElementById("logo-overlay");
 
-    if (!overlay) {
-        overlay = document.createElement("div");
-        overlay.id = "logo-overlay";
-        overlay.textContent = "Логотип";
-        overlay.style.display = "none";
-        document.body.appendChild(overlay);
-    }
-    return overlay;
-}
+const logoContainer = document.querySelector("#logo-container");
+const speaker = document.querySelector("#speaker");
 
-const logoOverlay = ensureLogoOverlay();
 const scheme = window.location.protocol === "https:" ? "wss" : "ws";
 const host = window.location.hostname || "127.0.0.1";
 const port = window.location.port ? `:${window.location.port}` : "";
@@ -82,13 +72,13 @@ function connectWebSocket() {
         const speakerTime = document.getElementById("speaker-time");
 
         if (!data.current_speaker) {
-            logoOverlay.style.display = "flex";
-            if (speakerName) speakerName.textContent = "-";
-            if (speakerTopic) speakerTopic.textContent = "-";
-            if (speakerTime) speakerTime.textContent = "00:00";
+            logoContainer.style.display = "block";
+            speaker.style.display = "none";
+
             return;
         } else {
-            logoOverlay.style.display = "none";
+            logoContainer.style.display = "none";
+            speaker.style.display = "block";
         }
 
         if (speakerName) speakerName.textContent = data.current_speaker || "-";

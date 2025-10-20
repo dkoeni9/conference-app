@@ -16,7 +16,7 @@
 
             {% for speaker in speakers %}
             <button type="button" class="list-group-item list-group-item-action {% if speaker.id == current_speaker.id %}active{% endif %}" data-id="{{ speaker.id }}" data-name="{{ speaker.full_name }}" data-time-limit="{{ speaker.time_limit_seconds }}">
-                {{ speaker.full_name }} — {{ speaker.topic }} — {{ speaker.time_limit_formatted }}
+                {{ speaker.full_name }} — {{ speaker.topic }} — <span class="speaker-time">{{ speaker.time_limit_formatted|default:"00:00" }}</span>
                 <span class="delete-speaker float-end text-danger" style="cursor:pointer;">&times;</span>
             </button>
             {% endfor %}
@@ -38,7 +38,6 @@
 
 <section>
     <h2>Таймер</h2>
-    <p>Время: <span id="timer">{{ current_speaker.time_limit_formatted|default:"00:00" }}</span></p>
 
     <button id="toggle-conference-button" class="btn btn-success">Запустить</button>
     <input type="number" id="extra-time-input" placeholder="Доп. время (сек)" />

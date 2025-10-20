@@ -47,7 +47,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const speakerList = document.getElementById("speaker-list");
     const activeBtn = document.querySelector("#speaker-list .list-group-item.active");
     const toggleBtn = document.querySelector("#toggle-conference-button");
-    const timer = document.getElementById("timer");
     const extraTimeInput = document.getElementById("extra-time-input");
     const addTimeBtn = document.getElementById("add-time-button");
 
@@ -95,7 +94,6 @@ document.addEventListener("DOMContentLoaded", function () {
         timeLimit = parseInt(btn.dataset.timeLimit || "0", 10);
 
         setSpeaker(speakerId);
-        timer.textContent = formatTime(timeLimit);
     });
 
 
@@ -106,7 +104,9 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!extraTime) return;
 
         timeLimit += extraTime;
-        timer.textContent = formatTime(timeLimit);
+
+        const timeSpan = document.querySelector("#speaker-list .list-group-item.active .speaker-time");
+        if (timeSpan) timeSpan.textContent = formatTime(timeLimit);
 
         const activeBtn = document.querySelector("#speaker-list .list-group-item.active");
         if (activeBtn) {
@@ -139,7 +139,9 @@ document.addEventListener("DOMContentLoaded", function () {
         if (conferenceRunning) {
             timerInterval = setInterval(() => {
                 timeLimit -= 1;
-                timer.textContent = formatTime(timeLimit);
+
+                const timeSpan = document.querySelector("#speaker-list .list-group-item.active .speaker-time");
+                if (timeSpan) timeSpan.textContent = formatTime(timeLimit);
 
                 fetch(`/update_time/${speakerId}/`, {
                     method: "POST",

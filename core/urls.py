@@ -1,5 +1,6 @@
 from django.contrib.auth import views as auth_views
-from django.urls import path
+from django.urls import path, re_path
+from django.views.generic import RedirectView
 from . import views
 
 urlpatterns = [
@@ -17,4 +18,6 @@ urlpatterns = [
     path("login/", views.CustomLoginView.as_view(), name="login"),
     path("logout/", auth_views.LogoutView.as_view(next_page="login"), name="logout"),
     path("access-denied/", views.access_denied, name="access_denied"),
+    #
+    re_path(r"^.*$", RedirectView.as_view(url="/", permanent=False)),
 ]

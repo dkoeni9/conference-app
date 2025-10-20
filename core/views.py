@@ -26,7 +26,6 @@ def operator_screen(request):
         {
             "speakers": speakers,
             "current_speaker": current_speaker,
-            "conference_is_running": conference.is_running if conference else False,
         },
     )
 
@@ -156,7 +155,17 @@ def is_client(user):
 @login_required
 @user_passes_test(is_client)
 def client_screen(request):
-    return render(request, "core/client.html")
+    conference = Conference.objects.first()
+    current_speaker = conference.speaker if conference and conference.speaker else None
+
+    return render(
+        request,
+        "core/client.html",
+        {
+            "current_speaker": current_speaker,
+            "conference_is_running": conference.is_running if conference else False,
+        },
+    )
 
 
 class CustomLoginView(auth_views.LoginView):

@@ -1,23 +1,31 @@
 #client-screen {
     font-family: Arial, sans-serif;
     text-align: center;
-    margin-top: 50px;
 }
 
-#speaker-name {
+#speaker > #speaker-name {
     font-size: 2em;
     margin-bottom: 20px;
 }
 
-#speaker-time {
+#speaker > #speaker-time {
     font-size: 4em;
     font-weight: bold;
 }
 
 
 /* logotype */
+#logo-container {
+    margin-top: 50px;
+    text-align: center;
+}
 
-#logo-overlay {
+/* #logo-container #logo {
+    max-width: 300px;
+    width: 50%;
+} */
+
+#logo-container > p {
     position: fixed;
     inset: 0;
     display: none;
