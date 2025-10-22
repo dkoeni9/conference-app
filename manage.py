@@ -4,17 +4,17 @@ import os
 import sys
 import socket
 
-if os.environ.get("RUN_MAIN") == "true":
-    print(
-        "Local network access: http://"
-        + socket.gethostbyname(socket.gethostname())
-        + ":8000"
-    )
-
 
 def main():
     """Run administrative tasks."""
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "conference.settings")
+
+    host_ip = socket.gethostbyname(socket.gethostname())
+    os.environ["HOST_IP"] = host_ip
+
+    if os.environ.get("RUN_MAIN") == "true":
+        print(f"Local network access: http://{host_ip}:8000")
+
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:
