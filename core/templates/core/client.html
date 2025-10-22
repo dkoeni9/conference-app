@@ -6,14 +6,13 @@
 {% block main %}
 
 <section id="speaker">
-    <h1 id="speaker-topic">{{ current_speaker.topic }}</h1>
+    <h1 id="speaker-topic" class="display-1">{{ current_speaker.topic }}</h1>
     <p id="speaker-name">{{ current_speaker.full_name }}</p>
-    <p id="speaker-time">{{ current_speaker.time_limit_formatted|default:"00:00"}}</p>
+    <p id="speaker-time">{{ current_speaker.time_limit_formatted}}</p>
 </section>
 
 <div id="logo-container">
-    <!-- <img id="logo" class="img-fluid" src="{% static 'core/logo.png' %}" alt="Логотип"> -->
-    <p>Логотип</p>
+    <img id="logo" class="img-fluid" src="{% static 'core/img/logo.png' %}" alt="Logo">
 </div>
 
 {% endblock %}

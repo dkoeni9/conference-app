@@ -97,7 +97,9 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
 
-    addTimeBtn.addEventListener("click", () => {
+    document.getElementById("time-control-form").addEventListener("submit", (e) => {
+        e.preventDefault();
+
         if (!speakerId) return;
 
         const extraTime = parseInt(extraTimeInput.value) || 0;
@@ -118,7 +120,8 @@ document.addEventListener("DOMContentLoaded", function () {
             headers: csrfHeader(),
             body: `extra_time=${extraTime}`
         });
-        extraTimeInput.value = '';
+
+        e.target.reset();
     });
 
 
@@ -126,7 +129,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!speakerId) return;
 
         conferenceRunning = !conferenceRunning;
-        toggleBtn.textContent = conferenceRunning ? "Остановить" : "Запустить";
+        toggleBtn.textContent = conferenceRunning ? "Остановить таймер" : "Запустить таймер";
         toggleBtn.classList.toggle("btn-danger", conferenceRunning);
         toggleBtn.classList.toggle("btn-success", !conferenceRunning);
 
@@ -155,7 +158,9 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
 
-    document.getElementById("add-speaker-button").addEventListener("click", () => {
+    document.getElementById("add-speaker-form").addEventListener("submit", (e) => {
+        e.preventDefault();
+
         const name = document.getElementById("new-speaker-name").value.trim();
         const topic = document.getElementById("new-speaker-topic").value.trim();
         const time = parseInt(document.getElementById("new-speaker-time").value, 10);

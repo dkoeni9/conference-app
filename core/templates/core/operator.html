@@ -5,10 +5,24 @@
 
 {% block main %}
 <h1>Управление конференцией</h1>
-<section class="row mb-3">
-    <div class="col-md-6">
-        <h2>Докладчики</h2>
+<section class="row gy-3">
+    <div class="col-md-4">
+        <form id="add-speaker-form" class="mb-3">
+            <input type="text" id="new-speaker-name" class="form-control mb-2" placeholder="ФИО" required>
+            <input type="text" id="new-speaker-topic" class="form-control mb-2" placeholder="Тема" required>
+            <input type="number" id="new-speaker-time" class="form-control mb-2" placeholder="Время (сек)" min="10" required>
+            <button id="add-speaker-button" class="btn btn-primary w-100">Добавить докладчика</button>
+        </form>
 
+        <form id="time-control-form" class="mb-3">
+            <input type="number" id="extra-time-input" class="form-control mb-2" placeholder="Доп. время (сек)" />
+            <button id="add-time-button" class="btn btn-primary w-100">Добавить время</button>
+        </form>
+
+        <button id="toggle-conference-button" class="btn btn-success w-100">Запустить таймер</button>
+    </div>
+
+    <div class=" col-md-8">
         <div id="speaker-list" class="list-group list-group-numbered">
             <button type="button" class="list-group-item list-group-item-action {% if not current_speaker %}active{% endif %} no-number" data-id="" data-name="" data-time-limit="0">
                 Не выбран
@@ -22,32 +36,6 @@
             {% endfor %}
         </div>
     </div>
-
-    <div class="col-md-6">
-        <h2>Добавить докладчика</h2>
-
-        <div id="add-speaker-form" class="mb-3">
-            <input type="text" id="new-speaker-name" class="form-control" placeholder="ФИО" required>
-            <input type="text" id="new-speaker-topic" class="form-control" placeholder="Тема" required>
-            <input type="number" id="new-speaker-time" class="form-control" placeholder="Время (сек)" min="10" required>
-            <button id="add-speaker-button" class="btn btn-primary">Добавить</button>
-        </div>
-    </div>
-
-</section>
-
-<section>
-    <h2>Таймер</h2>
-
-    <button id="toggle-conference-button" class="btn btn-success">Запустить</button>
-    <input type="number" id="extra-time-input" placeholder="Доп. время (сек)" />
-    <button id="add-time-button" class="btn btn-primary">Добавить время</button>
-
-</section>
-
-<section>
-
-
 </section>
 {% endblock %}
 

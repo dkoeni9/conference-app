@@ -30,7 +30,7 @@ class Speaker(models.Model):
         return f"-{formatted}" if is_negative else formatted
 
     def __str__(self):
-        return f'{self.full_name.split()[0]} {self.full_name.split()[1][0]}.{self.full_name.split()[2][0]}. — "{self.topic}"'
+        return f'{self.full_name} — "{self.topic}"'
 
 
 class Conference(models.Model):
