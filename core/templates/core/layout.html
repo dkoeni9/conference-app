@@ -12,12 +12,14 @@
             var csrftoken = '{{ csrf_token }}';
         </script>
     </head>
-    <body class="bg-light">
-        <header>
+    <body class="d-flex flex-column bg-body">
+
+        {% if request.path != '/login/' %}
+        <header class="w-100">
             <nav class="navbar navbar-expand-lg bg-primary">
                 <div class="container">
                     <a class="navbar-brand" href="#">
-                        <img class="img-fluid" src="{% static 'core/img/logo.png' %}" alt="Logo" width="30" height="24">
+                        <img class="img-fluid" src="{% static 'core/img/logo-2.png' %}" alt="Logo" width="32" height="32">
                     </a>
 
                     {% if user.is_authenticated %}
@@ -29,8 +31,9 @@
                 </div>
             </nav>
         </header>
+        {% endif %}
 
-        <main class="container">
+        <main class="container flex-grow-1 py-4">
             {% block main %}{% endblock %}
         </main>
         <footer>

@@ -4,7 +4,7 @@
 {% block title %}Оператор{% endblock %}
 
 {% block main %}
-<h1>Управление конференцией</h1>
+<h1>Конференция</h1>
 <section class="row gy-3">
     <div class="col-md-4">
         <form id="add-speaker-form" class="mb-3">
@@ -30,7 +30,9 @@
 
             {% for speaker in speakers %}
             <button type="button" class="list-group-item list-group-item-action {% if speaker.id == current_speaker.id %}active{% endif %}" data-id="{{ speaker.id }}" data-name="{{ speaker.full_name }}" data-time-limit="{{ speaker.time_limit_seconds }}">
-                {{ speaker.full_name }} — {{ speaker.topic }} — <span class="speaker-time">{{ speaker.time_limit_formatted|default:"00:00" }}</span>
+                <span class="speaker-name">{{ speaker.full_name }} —</span>
+                <span class="speaker-topic">{{ speaker.topic }} —</span>
+                <span class="speaker-time">{{ speaker.time_limit_formatted|default:"00:00" }}</span>
                 <span class="delete-speaker float-end text-danger" style="cursor:pointer;">&times;</span>
             </button>
             {% endfor %}

@@ -31,7 +31,26 @@ function refreshSpeakerCard(speaker) {
     btn.dataset.name = speaker.full_name;
     btn.dataset.timeLimit = speaker.time_limit_seconds;
 
-    btn.textContent = `${speaker.full_name} — ${speaker.topic} — ${formatTime(speaker.time_limit_seconds)}`;
+    btn.textContent = "";
+
+    const nameSpan = document.createElement("span");
+    nameSpan.className = "speaker-name";
+    nameSpan.textContent = speaker.full_name;
+    btn.appendChild(nameSpan);
+
+    btn.appendChild(document.createTextNode(" — "));
+
+    const topicSpan = document.createElement("span");
+    topicSpan.className = "speaker-topic";
+    topicSpan.textContent = speaker.topic;
+    btn.appendChild(topicSpan);
+
+    btn.appendChild(document.createTextNode(" — "));
+
+    const timeSpan = document.createElement("span");
+    timeSpan.className = "speaker-time";
+    timeSpan.textContent = formatTime(speaker.time_limit_seconds);
+    btn.appendChild(timeSpan);
 
     const deleteSpan = document.createElement("span");
     deleteSpan.className = "delete-speaker float-end text-danger";
@@ -45,6 +64,7 @@ function refreshSpeakerCard(speaker) {
 
 document.addEventListener("DOMContentLoaded", function () {
     const speakerList = document.getElementById("speaker-list");
+    const noSpeakerBtn = speakerList.querySelector(".no-number");
     const activeBtn = document.querySelector("#speaker-list .list-group-item.active");
     const toggleBtn = document.querySelector("#toggle-conference-button");
     const extraTimeInput = document.getElementById("extra-time-input");
@@ -66,6 +86,10 @@ document.addEventListener("DOMContentLoaded", function () {
             const speakerId = btn.dataset.id;
             if (!speakerId) return;
             if (!confirm("Удалить выбранного спикера?")) return;
+            console.log(btn);
+
+            const isActive = btn.classList.contains("active");
+            console.log(isActive.dataset);
 
             fetch(`/delete-speaker/${speakerId}/`, {
                 method: "POST",
@@ -75,7 +99,18 @@ document.addEventListener("DOMContentLoaded", function () {
                 .then(res => res.json())
                 .then(data => {
                     if (data.success) {
+
+                        if (isActive.dataset.id == speakerId) {
+                            noSpeakerBtn.classList.add("active");
+                            setSpeaker("");
+
+                            if (conferenceRunning) {
+                                toggleBtn.click();
+                            }
+                        }
+
                         btn.remove();
+
                         alert("Спикер удалён.");
                     } else {
                         alert("Ошибка удаления");

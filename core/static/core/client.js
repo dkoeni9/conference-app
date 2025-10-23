@@ -21,7 +21,7 @@ if (CLEAR_CLIENT_STORAGE_ON_LOAD) {
 }
 
 
-const logoContainer = document.querySelector("#logo-container");
+const logoWrapper = document.querySelector("#logo-wrapper");
 const speaker = document.querySelector("#speaker");
 
 const scheme = window.location.protocol === "https:" ? "wss" : "ws";
@@ -72,12 +72,12 @@ function connectWebSocket() {
         const speakerTime = document.getElementById("speaker-time");
 
         if (!data.current_speaker) {
-            logoContainer.style.display = "block";
+            logoWrapper.style.display = "flex";
             speaker.style.display = "none";
 
             return;
         } else {
-            logoContainer.style.display = "none";
+            logoWrapper.style.display = "none";
             speaker.style.display = "block";
         }
 

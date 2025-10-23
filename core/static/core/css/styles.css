@@ -1,28 +1,22 @@
-#client-screen {
-    font-family: Arial, sans-serif;
-    text-align: center;
+html,
+body {
+    height: 100%;
 }
-
-#speaker > #speaker-name {
-    font-size: 2em;
-    margin-bottom: 20px;
-}
-
-#speaker > #speaker-time {
-    font-size: 4em;
-    font-weight: bold;
-}
-
 
 /* logotype */
-#logo-container {
-    margin-top: 50px;
-    text-align: center;
+#logo-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
 }
 
-#logo {
-    max-width: 100%;
-    max-height: 90vh;
+#logo-wrapper #logo {
+    max-width: 90vw;
+    max-height: 80vh;
+    width: auto;
+    height: auto;
+    object-fit: contain;
 }
 
 /* .container,
