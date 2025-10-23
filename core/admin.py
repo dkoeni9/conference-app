@@ -10,7 +10,7 @@ class SpeakerAdmin(admin.ModelAdmin):
 
 @admin.register(Conference)
 class ConferenceAdmin(admin.ModelAdmin):
-    list_display = ("speaker", "start_time", "is_running")
+    list_display = ("speaker", "is_running")
     list_editable = ("is_running",)
 
     def has_add_permission(self, request):

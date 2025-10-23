@@ -37,7 +37,6 @@ class Conference(models.Model):
     speaker = models.ForeignKey(
         Speaker, on_delete=models.SET_NULL, null=True, blank=True
     )
-    start_time = models.DateTimeField(null=True, blank=True)
     is_running = models.BooleanField(default=False)
 
     def __str__(self):

@@ -81,6 +81,7 @@ def set_speaker(request, speaker_id=None):
 
     if not speaker_id:
         conference.speaker = None
+        conference.is_running = False
         conference.save()
         broadcast_conference_update()
 
