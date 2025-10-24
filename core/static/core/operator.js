@@ -86,10 +86,8 @@ document.addEventListener("DOMContentLoaded", function () {
             const speakerId = btn.dataset.id;
             if (!speakerId) return;
             if (!confirm("Удалить выбранного спикера?")) return;
-            console.log(btn);
 
             const isActive = btn.classList.contains("active");
-            console.log(isActive.dataset);
 
             fetch(`/delete-speaker/${speakerId}/`, {
                 method: "POST",
@@ -100,7 +98,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 .then(data => {
                     if (data.success) {
 
-                        if (isActive.dataset.id == speakerId) {
+                        if (isActive) {
                             noSpeakerBtn.classList.add("active");
                             setSpeaker("");
 
