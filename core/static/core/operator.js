@@ -1,65 +1,7 @@
-import { csrfHeader, formatTime } from "./shared.js";
-
-
-function setSpeaker(speakerId) {
-    const url = speakerId
-        ? `/set-speaker/${speakerId}/`
-        : `/set-speaker/`;
-    fetch(url, {
-        method: "POST",
-        headers: csrfHeader(),
-        body: ""
-    })
-        .then((res) => {
-            if (!res.ok) throw new Error("set_speaker failed");
-            return res.json();
-        })
-        .then((data) => {
-            console.log("set_speaker response:", data);
-        })
-        .catch((err) => console.error("set_speaker error:", err));
-}
-
-
-function refreshSpeakerCard(speaker) {
-    const speakerList = document.getElementById("speaker-list");
-
-    const btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = "list-group-item list-group-item-action";
-    btn.dataset.id = speaker.id;
-    btn.dataset.name = speaker.full_name;
-    btn.dataset.timeLimit = speaker.time_limit_seconds;
-
-    btn.textContent = "";
-
-    const nameSpan = document.createElement("span");
-    nameSpan.className = "speaker-name";
-    nameSpan.textContent = speaker.full_name;
-    btn.appendChild(nameSpan);
-
-    btn.appendChild(document.createTextNode(" — "));
-
-    const topicSpan = document.createElement("span");
-    topicSpan.className = "speaker-topic";
-    topicSpan.textContent = speaker.topic;
-    btn.appendChild(topicSpan);
-
-    btn.appendChild(document.createTextNode(" — "));
-
-    const timeSpan = document.createElement("span");
-    timeSpan.className = "speaker-time";
-    timeSpan.textContent = formatTime(speaker.time_limit_seconds);
-    btn.appendChild(timeSpan);
-
-    const deleteSpan = document.createElement("span");
-    deleteSpan.className = "delete-speaker float-end text-danger";
-    deleteSpan.style.cursor = "pointer";
-    deleteSpan.innerHTML = "&times;";
-    btn.appendChild(deleteSpan);
-
-    speakerList.appendChild(btn);
-}
+import { api } from "./api.js";
+import { addSpeakerButton } from "./dom.js";
+import { formatTime } from "./shared.js";
+import { state } from "./state.js";
 
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -68,131 +10,110 @@ document.addEventListener("DOMContentLoaded", function () {
     const activeBtn = document.querySelector("#speaker-list .list-group-item.active");
     const toggleBtn = document.querySelector("#toggle-conference-button");
     const extraTimeInput = document.getElementById("extra-time-input");
-    const addTimeBtn = document.getElementById("add-time-button");
 
-    let speakerId = activeBtn?.dataset.id || null;
-    let timeLimit = parseInt(activeBtn?.dataset.timeLimit || "0", 10);
-
-    let conferenceRunning = false;
-    let timerInterval = null;
+    state.speakerId = activeBtn?.dataset.id || null;
+    state.timeLimit = parseInt(activeBtn?.dataset.timeLimit || "0", 10);
+    state.conferenceRunning = false;
+    state.timerInterval = null;
 
 
-    speakerList.addEventListener("click", function (e) {
-        const btn = e.target.closest(".list-group-item");
+    speakerList.addEventListener("click", async (event) => {
+        const btn = event.target.closest(".list-group-item");
         if (!btn) return;
 
-        if (e.target.classList.contains("delete-speaker")) {
-            e.stopPropagation();
-            const speakerId = btn.dataset.id;
-            if (!speakerId) return;
+        if (event.target.classList.contains("delete-speaker")) {
+            event.stopPropagation();
+            const speakerIdToDelete = btn.dataset.id;
+            if (!speakerIdToDelete) return;
             if (!confirm("Удалить выбранного спикера?")) return;
 
-            const isActive = btn.classList.contains("active");
+            try {
+                const data = await api.deleteSpeaker(speakerIdToDelete);
 
-            fetch(`/delete-speaker/${speakerId}/`, {
-                method: "POST",
-                headers: csrfHeader(),
-                body: ""
-            })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.success) {
+                if (btn.classList.contains("active")) {
+                    noSpeakerBtn.classList.add("active");
+                    state.speakerId = null;
+                    await api.setSpeaker("");
 
-                        if (isActive) {
-                            noSpeakerBtn.classList.add("active");
-                            setSpeaker("");
+                    if (state.conferenceRunning) toggleBtn.click();
+                }
 
-                            if (conferenceRunning) {
-                                toggleBtn.click();
-                            }
-                        }
-
-                        btn.remove();
-
-                        alert("Спикер удалён.");
-                    } else {
-                        alert("Ошибка удаления");
-                    }
-                })
-                .catch(err => console.error("Ошибка удаления:", err));
+                btn.remove();
+                alert("Спикер удалён.");
+            } catch (error) {
+                console.error("Ошибка удаления:", error);
+                alert(error.message);
+            }
 
             return;
         }
 
-        document.querySelectorAll("#speaker-list .list-group-item")
-            .forEach(b => b.classList.remove("active"));
+        speakerList.querySelectorAll(".list-group-item").forEach(b => b.classList.remove("active"));
         btn.classList.add("active");
 
-        speakerId = btn.dataset.id || "";
-        timeLimit = parseInt(btn.dataset.timeLimit || "0", 10);
+        state.speakerId = btn.dataset.id || "";
+        state.timeLimit = parseInt(btn.dataset.timeLimit || "0", 10);
 
-        setSpeaker(speakerId);
+        await api.setSpeaker(state.speakerId);
     });
 
 
-    document.getElementById("time-control-form").addEventListener("submit", (e) => {
-        e.preventDefault();
-
-        if (!speakerId) return;
+    document.getElementById("time-control-form").addEventListener("submit", async (event) => {
+        event.preventDefault();
+        if (!state.speakerId) return;
 
         const extraTime = parseInt(extraTimeInput.value) || 0;
         if (!extraTime) return;
 
-        timeLimit += extraTime;
+        state.timeLimit += extraTime;
 
-        const timeSpan = document.querySelector("#speaker-list .list-group-item.active .speaker-time");
-        if (timeSpan) timeSpan.textContent = formatTime(timeLimit);
+        const timeSpan = speakerList.querySelector(".list-group-item.active .speaker-time");
+        if (timeSpan) timeSpan.textContent = formatTime(state.timeLimit);
 
-        const activeBtn = document.querySelector("#speaker-list .list-group-item.active");
-        if (activeBtn) {
-            activeBtn.dataset.timeLimit = String(timeLimit);
+        const activeBtn = speakerList.querySelector(".list-group-item.active");
+        if (activeBtn) activeBtn.dataset.timeLimit = String(state.timeLimit);
+
+        try {
+            await api.updateTime(state.speakerId, `extra_time=${extraTime}`);
+        } catch (error) {
+            console.error("Ошибка обновления времени:", error);
         }
 
-        fetch(`/update_time/${speakerId}/`, {
-            method: "POST",
-            headers: csrfHeader(),
-            body: `extra_time=${extraTime}`
-        });
-
-        e.target.reset();
+        event.target.reset();
     });
 
 
-    toggleBtn.addEventListener("click", () => {
-        if (!speakerId) return;
+    toggleBtn.addEventListener("click", async () => {
+        if (!state.speakerId) return;
 
-        conferenceRunning = !conferenceRunning;
-        toggleBtn.textContent = conferenceRunning ? "Остановить таймер" : "Запустить таймер";
-        toggleBtn.classList.toggle("btn-danger", conferenceRunning);
-        toggleBtn.classList.toggle("btn-success", !conferenceRunning);
+        state.conferenceRunning = !state.conferenceRunning;
+        toggleBtn.textContent = state.conferenceRunning ? "Остановить таймер" : "Запустить таймер";
+        toggleBtn.classList.toggle("btn-danger", state.conferenceRunning);
+        toggleBtn.classList.toggle("btn-success", !state.conferenceRunning);
 
-        fetch(`/update_time/${speakerId}/`, {
-            method: "POST",
-            headers: csrfHeader(),
-            body: `action=${conferenceRunning ? "start" : "stop"}`
-        });
+        await api.updateTime(state.speakerId, `action=${state.conferenceRunning ? "start" : "stop"}`);
 
-        if (conferenceRunning) {
-            timerInterval = setInterval(() => {
-                timeLimit -= 1;
+        if (state.conferenceRunning) {
+            state.timerInterval = setInterval(async () => {
+                state.timeLimit -= 1;
 
-                const timeSpan = document.querySelector("#speaker-list .list-group-item.active .speaker-time");
-                if (timeSpan) timeSpan.textContent = formatTime(timeLimit);
+                const timeSpan = speakerList.querySelector(".list-group-item.active .speaker-time");
+                if (timeSpan) timeSpan.textContent = formatTime(state.timeLimit);
 
-                fetch(`/update_time/${speakerId}/`, {
-                    method: "POST",
-                    headers: csrfHeader(),
-                    body: "action=tick"
-                });
+                try {
+                    await api.updateTime(state.speakerId, "action=tick");
+                } catch (error) {
+                    console.error("Ошибка tick:", error);
+                }
             }, 1000);
         } else {
-            clearInterval(timerInterval);
+            clearInterval(state.timerInterval);
         }
     });
 
 
-    document.getElementById("add-speaker-form").addEventListener("submit", (e) => {
-        e.preventDefault();
+    document.getElementById("add-speaker-form").addEventListener("submit", async (event) => {
+        event.preventDefault();
 
         const name = document.getElementById("new-speaker-name").value.trim();
         const topic = document.getElementById("new-speaker-topic").value.trim();
@@ -203,26 +124,21 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        fetch("/add-speaker/", {
-            method: "POST",
-            headers: csrfHeader(),
-            body: `full_name=${encodeURIComponent(name)}&topic=${encodeURIComponent(topic)}&time_limit_seconds=${time}`
-        })
-            .then(res => res.json())
-            .then(data => {
-                if (data.error) {
-                    alert(data.error);
-                    return;
-                }
+        try {
+            const data = await api.addSpeaker(
+                `full_name=${encodeURIComponent(name)}&topic=${encodeURIComponent(topic)}&time_limit_seconds=${time}`
+            );
 
-                refreshSpeakerCard(data);
 
-                alert("Спикер добавлен!");
+            addSpeakerButton(speakerList, data);
+            alert("Спикер добавлен!");
 
-                document.getElementById("new-speaker-name").value = "";
-                document.getElementById("new-speaker-topic").value = "";
-                document.getElementById("new-speaker-time").value = "";
-            })
-            .catch(err => console.error("Ошибка добавления:", err));
+            document.getElementById("new-speaker-name").value = "";
+            document.getElementById("new-speaker-topic").value = "";
+            document.getElementById("new-speaker-time").value = "";
+        } catch (error) {
+            console.error("Ошибка добавления:", error);
+            alert(error.message);
+        }
     });
 });
