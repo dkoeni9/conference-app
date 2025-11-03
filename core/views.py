@@ -66,7 +66,7 @@ def delete_speaker(request, speaker_id):
 
     broadcast_conference_update()
 
-    return JsonResponse({"success": True})
+    return JsonResponse({}, status=204)
 
 
 @login_required
@@ -87,7 +87,6 @@ def set_speaker(request, speaker_id=None):
 
         return JsonResponse(
             {
-                "ok": True,
                 "speaker": None,
                 "topic": "",
                 "time_limit": 0,
@@ -101,7 +100,6 @@ def set_speaker(request, speaker_id=None):
 
     return JsonResponse(
         {
-            "ok": True,
             "speaker": speaker.full_name,
             "topic": getattr(speaker, "topic", ""),
             "time_limit": int(
