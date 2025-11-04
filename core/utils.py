@@ -14,3 +14,11 @@ def broadcast_conference_update():
         "conference",
         {"type": "conference.update"},
     )
+
+
+def is_client(user):
+    return user.groups.filter(name="client").exists()
+
+
+def is_operator(user):
+    return user.groups.filter(name="operator").exists() or user.is_superuser

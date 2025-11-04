@@ -5,12 +5,9 @@ from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from django.views.decorators.http import require_POST
+from .forms import CustomAuthenticationForm
 from .models import Speaker, Conference
-from .utils import broadcast_conference_update
-
-
-def is_operator(user):
-    return user.groups.filter(name="operator").exists() or user.is_superuser
+from .utils import broadcast_conference_update, is_client, is_operator
 
 
 @login_required
@@ -147,10 +144,6 @@ def update_time(request, speaker_id):
         return JsonResponse({"error": "Invalid value"}, status=400)
 
 
-def is_client(user):
-    return user.groups.filter(name="client").exists()
-
-
 @login_required
 @user_passes_test(is_client)
 def client_screen(request):
@@ -169,6 +162,7 @@ def client_screen(request):
 
 class CustomLoginView(auth_views.LoginView):
     template_name = "core/login.html"
+    form_class = CustomAuthenticationForm
 
     def get_success_url(self):
         """Редирект в зависимости от роли"""
