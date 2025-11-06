@@ -1,5 +1,5 @@
 import { api } from "./api.js";
-import { addSpeakerButton } from "./dom.js";
+import { addSpeakerButton, updateDeleteIconStyles } from "./dom.js";
 import { formatTime } from "./shared.js";
 import { state } from "./state.js";
 
@@ -16,12 +16,15 @@ document.addEventListener("DOMContentLoaded", function () {
     state.conferenceRunning = false;
     state.timerInterval = null;
 
+    // Ensure initial state for delete icons
+    updateDeleteIconStyles();
+
 
     speakerList.addEventListener("click", async (event) => {
         const btn = event.target.closest(".list-group-item");
         if (!btn) return;
 
-        if (event.target.classList.contains("delete-speaker")) {
+        if (event.target.closest(".delete-speaker")) {
             event.stopPropagation();
             const speakerIdToDelete = btn.dataset.id;
             if (!speakerIdToDelete) return;
@@ -58,6 +61,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 await api.deleteSpeaker(speakerIdToDelete);
 
                 btn.remove();
+                // Update delete icon styles after removal
+                updateDeleteIconStyles();
+
                 alert("Спикер удалён.");
             } catch (error) {
                 console.error("Ошибка удаления:", error);
@@ -97,6 +103,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
         state.speakerId = btn.dataset.id || "";
         state.timeLimit = parseInt(btn.dataset.timeLimit || "0", 10);
+
+        // Update delete icon styles when active speaker changes
+        updateDeleteIconStyles();
 
         await api.setSpeaker(state.speakerId);
     });
@@ -175,6 +184,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
             addSpeakerButton(speakerList, data);
+            // Ensure delete icon classes are correct for the new list
+            updateDeleteIconStyles();
             alert("Спикер добавлен!");
 
             document.getElementById("new-speaker-name").value = "";

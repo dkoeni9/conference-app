@@ -19,11 +19,19 @@ body {
     object-fit: contain;
 }
 
-/* .container,
-.container-fluid {
-    background-color: blue;
-} */
 
 .list-group-numbered > .list-group-item.no-number::before {
     content: none;
+}
+
+
+.icon-wrapper {
+    padding: 4px;
+    cursor: pointer;
+}
+
+.icon-wrapper svg {
+    display: inline-block;
+    height: 1lh;
+    width: auto;
 }
