@@ -28,15 +28,34 @@ document.addEventListener("DOMContentLoaded", function () {
             if (!confirm("Удалить выбранного спикера?")) return;
 
             try {
-                const data = await api.deleteSpeaker(speakerIdToDelete);
-
+                // If the deleted speaker is the current one, reset state
                 if (btn.classList.contains("active")) {
+                    // Stop timer if running
+                    if (state.conferenceRunning && state.speakerId) {
+                        try {
+                            state.conferenceRunning = false;
+                            clearInterval(state.timerInterval);
+                            state.timerInterval = null;
+
+                            toggleBtn.textContent = "Запустить таймер";
+                            toggleBtn.classList.remove("btn-danger");
+                            toggleBtn.classList.add("btn-success");
+
+                            await api.updateTime(state.speakerId, "action=stop");
+                        } catch (error) {
+                            console.error("Ошибка при остановке таймера на сервере при удалении:", error);
+                        }
+                    }
+
+                    // Reset state
                     noSpeakerBtn.classList.add("active");
                     state.speakerId = null;
                     await api.setSpeaker("");
 
                     if (state.conferenceRunning) toggleBtn.click();
                 }
+
+                await api.deleteSpeaker(speakerIdToDelete);
 
                 btn.remove();
                 alert("Спикер удалён.");
@@ -46,6 +65,31 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             return;
+        }
+
+        // Stop timer if switching speakers
+        const prevSpeakerId = state.speakerId;
+        const newSpeakerId = btn.dataset.id || "";
+
+        // If the same speaker is clicked, do nothing
+        if (prevSpeakerId === newSpeakerId) {
+            return;
+        }
+
+        if ((state.conferenceRunning && prevSpeakerId) && (prevSpeakerId !== newSpeakerId)) {
+            state.conferenceRunning = false;
+            clearInterval(state.timerInterval);
+            state.timerInterval = null;
+
+            toggleBtn.textContent = "Запустить таймер";
+            toggleBtn.classList.remove("btn-danger");
+            toggleBtn.classList.add("btn-success");
+
+            try {
+                await api.updateTime(prevSpeakerId, "action=stop");
+            } catch (error) {
+                console.error("Ошибка при остановке таймера на сервере при переключении:", error);
+            }
         }
 
         speakerList.querySelectorAll(".list-group-item").forEach(b => b.classList.remove("active"));
