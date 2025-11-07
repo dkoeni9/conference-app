@@ -4,7 +4,7 @@ from . import views
 
 urlpatterns = [
     path("", views.client_screen, name="client_screen"),
-    path("operator/", views.operator_screen, name="operator_screen"),
+    path("dashboard/", views.dashboard, name="dashboard"),
     #
     path("update-time/<int:speaker_id>/", views.update_time, name="update_time"),
     path("add-speaker/", views.add_speaker, name="add_speaker"),

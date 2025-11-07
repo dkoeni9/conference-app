@@ -12,14 +12,14 @@ from .utils import broadcast_conference_update, is_client, is_operator
 
 @login_required
 @user_passes_test(is_operator)
-def operator_screen(request):
+def dashboard(request):
     speakers = Speaker.objects.all()
     conference = Conference.objects.first()
     current_speaker = conference.speaker if conference and conference.speaker else None
 
     return render(
         request,
-        "core/operator.html",
+        "core/dashboard.html",
         {
             "speakers": speakers,
             "current_speaker": current_speaker,
@@ -169,7 +169,7 @@ class CustomLoginView(auth_views.LoginView):
         user = self.request.user
 
         if is_operator(user):
-            return reverse("operator_screen")
+            return reverse("dashboard")
         elif is_client(user):
             return reverse("client_screen")
         else:

@@ -1,10 +1,10 @@
 {% extends "core/layout.html" %}
 {% load static %}
 
-{% block title %}Оператор{% endblock %}
+{% block title %}Панель управления{% endblock %}
 
 {% block main %}
-<h1>Конференция</h1>
+<h1>Панель управления</h1>
 <section class="row gy-3">
     <div class="col-md-4">
         <form id="add-speaker-form" class="mb-3">
@@ -48,5 +48,5 @@
 {% endblock %}
 
 {% block scripts %}
-<script type="module" src="{% static 'core/operator.js' %}"></script>
+<script type="module" src="{% static 'core/dashboard.js' %}"></script>
 {% endblock %}
