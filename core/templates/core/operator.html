@@ -29,9 +29,9 @@
             </button>
 
             {% for speaker in speakers %}
-            <button type="button" class="list-group-item list-group-item-action {% if speaker.id == current_speaker.id %}active{% endif %}" data-id="{{ speaker.id }}" data-name="{{ speaker.full_name }}" data-time-limit="{{ speaker.time_limit_seconds }}">
-                <span class="speaker-name">{{ speaker.full_name }}</span> —
-                <span class="speaker-topic">{{ speaker.topic }}</span> —
+            <button type="button" class="speaker-item list-group-item list-group-item-action {% if speaker.id == current_speaker.id %}active{% endif %}" data-id="{{ speaker.id }}" data-name="{{ speaker.full_name }}" data-time-limit="{{ speaker.time_limit_seconds }}">
+                <span class="speaker-name">{{ speaker.full_name }}</span>
+                <span class="speaker-topic text-truncate">&laquo;{{ speaker.topic }}&raquo;</span>
                 <span class="speaker-time">{{ speaker.time_limit_formatted|default:"00:00" }}</span>
 
                 <span class="icon-wrapper delete-speaker text-dark">

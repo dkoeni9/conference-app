@@ -24,14 +24,28 @@ body {
     content: none;
 }
 
+.speaker-item {
+    display: grid;
+    grid-template-columns: 24px 2fr 3fr 80px 24px;
+    /* номер, имя, тема, время, иконка */
+    align-items: center;
+    gap: 8px;
+}
+
+.speaker-topic {
+    display: inline-block;
+}
+
+.speaker-time {
+    justify-self: center;
+}
 
 .icon-wrapper {
-    padding: 4px;
+    height: 24px;
     cursor: pointer;
 }
 
 .icon-wrapper svg {
-    display: inline-block;
-    height: 1lh;
-    width: auto;
+    display: block;
+    margin: 0 auto;
 }
