@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded", function () {
             event.stopPropagation();
             const speakerIdToDelete = btn.dataset.id;
             if (!speakerIdToDelete) return;
-            if (!confirm("Удалить выбранного спикера?")) return;
+            // if (!confirm("Удалить выбранного спикера?")) return;
 
             try {
                 // If the deleted speaker is the current one, reset state
@@ -64,7 +64,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 // Update delete icon styles after removal
                 updateDeleteIconStyles();
 
-                alert("Спикер удалён.");
+                // alert("Спикер удалён.");
             } catch (error) {
                 console.error("Ошибка удаления:", error);
                 alert(error.message);
@@ -172,10 +172,10 @@ document.addEventListener("DOMContentLoaded", function () {
         const topic = document.getElementById("new-speaker-topic").value.trim();
         const time = parseInt(document.getElementById("new-speaker-time").value, 10);
 
-        if (!name || !topic || !time) {
-            alert("Пожалуйста, заполните все поля");
-            return;
-        }
+        // if (!name || !topic || !time) {
+        //     alert("Пожалуйста, заполните все поля");
+        //     return;
+        // }
 
         try {
             const data = await api.addSpeaker(
@@ -186,7 +186,7 @@ document.addEventListener("DOMContentLoaded", function () {
             addSpeakerButton(speakerList, data);
             // Ensure delete icon classes are correct for the new list
             updateDeleteIconStyles();
-            alert("Спикер добавлен!");
+            // alert("Спикер добавлен!");
 
             document.getElementById("new-speaker-name").value = "";
             document.getElementById("new-speaker-topic").value = "";
