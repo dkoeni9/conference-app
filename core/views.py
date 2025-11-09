@@ -48,6 +48,7 @@ def add_speaker(request):
         {
             "id": speaker.id,
             "full_name": speaker.full_name,
+            "short_name": speaker.short_name,
             "topic": speaker.topic,
             "time_limit_seconds": int(speaker.time_limit.total_seconds()),
         }

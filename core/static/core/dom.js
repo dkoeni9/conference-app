@@ -10,8 +10,10 @@ export function createSpeakerButton(speaker) {
     button.dataset.name = speaker.full_name;
     button.dataset.timeLimit = speaker.time_limit_seconds;
 
+    const shortName = speaker.short_name ? speaker.short_name : speaker.full_name;
+
     button.innerHTML = `
-    <span class="speaker-name">${speaker.full_name}</span>
+    <span class="speaker-name">${shortName}</span>
     <span class="speaker-topic text-truncate">&laquo;${speaker.topic}&raquo;</span>
     <span class="speaker-time">${formatTime(speaker.time_limit_seconds)}</span>
     <span class="icon-wrapper delete-speaker text-dark">
