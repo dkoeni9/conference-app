@@ -1,5 +1,5 @@
 import { api } from "./api.js";
-import { addSpeakerButton, updateDeleteIconStyles } from "./dom.js";
+import { addSpeakerButton, updateSpeakerItemStyles } from "./dom.js";
 import { formatTime } from "./shared.js";
 import { state } from "./state.js";
 
@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", function () {
     state.timerInterval = null;
 
     // Ensure initial state for delete icons
-    updateDeleteIconStyles();
+    updateSpeakerItemStyles();
 
 
     speakerList.addEventListener("click", async (event) => {
@@ -62,7 +62,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 btn.remove();
                 // Update delete icon styles after removal
-                updateDeleteIconStyles();
+                updateSpeakerItemStyles();
 
                 // alert("Спикер удалён.");
             } catch (error) {
@@ -105,7 +105,7 @@ document.addEventListener("DOMContentLoaded", function () {
         state.timeLimit = parseInt(btn.dataset.timeLimit || "0", 10);
 
         // Update delete icon styles when active speaker changes
-        updateDeleteIconStyles();
+        updateSpeakerItemStyles();
 
         await api.setSpeaker(state.speakerId);
     });
@@ -185,7 +185,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             addSpeakerButton(speakerList, data);
             // Ensure delete icon classes are correct for the new list
-            updateDeleteIconStyles();
+            updateSpeakerItemStyles();
             // alert("Спикер добавлен!");
 
             document.getElementById("new-speaker-name").value = "";

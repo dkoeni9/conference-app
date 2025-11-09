@@ -34,14 +34,21 @@ export function addSpeakerButton(listElement, speaker) {
 }
 
 
-export function updateDeleteIconStyles() {
+export function updateSpeakerItemStyles() {
     const speakerList = document.getElementById("speaker-list");
 
     speakerList.querySelectorAll(".list-group-item").forEach(item => {
-        const span = item.querySelector(".delete-speaker");
-        if (!span) return;
+        const deleteIcon = item.querySelector(".delete-speaker");
+        const timeSpan = item.querySelector(".speaker-time");
 
-        span.classList.toggle("text-light", item.classList.contains("active"));
-        span.classList.toggle("text-dark", !item.classList.contains("active"));
+        if (deleteIcon) {
+            deleteIcon.classList.toggle("text-light", item.classList.contains("active"));
+            deleteIcon.classList.toggle("text-dark", !item.classList.contains("active"));
+        }
+
+        if (timeSpan) {
+            timeSpan.classList.toggle("text-bg-secondary", item.classList.contains("active"));
+            timeSpan.classList.toggle("text-bg-primary", !item.classList.contains("active"));
+        }
     });
 }

@@ -12,14 +12,14 @@
             var csrftoken = '{{ csrf_token }}';
         </script>
     </head>
-    <body class="d-flex flex-column bg-body">
+    <body class="d-flex flex-column {% if request.resolver_match.url_name == 'login' %}bg-body-tertiary{% else %}bg-body{% endif %}">
 
         {% if user.is_authenticated %}
         <header class="w-100">
             <nav class="navbar navbar-expand-lg bg-primary">
                 <div class="container">
                     <a href="{{ logo_url }}">
-                        <img src="{% static 'core/img/logo-2.png' %}" alt="Logo" width="40" height="40">
+                        <img src="{% static 'core/img/logo-2.png' %}" alt="Logo" width="48" height="48">
                     </a>
                     <form method="post" action="{% url 'logout' %}" class="d-flex ms-auto">
                         {% csrf_token %}

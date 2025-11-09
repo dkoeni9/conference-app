@@ -4,19 +4,27 @@
 {% block title %}Панель управления{% endblock %}
 
 {% block main %}
-<h1>Панель управления</h1>
-<section class="row gy-3">
+<section class="row g-4">
+
     <div class="col-md-4">
-        <form id="add-speaker-form" class="mb-3">
-            <input type="text" id="new-speaker-name" class="form-control mb-2" placeholder="ФИО" required>
-            <input type="text" id="new-speaker-topic" class="form-control mb-2" placeholder="Тема" required>
-            <input type="number" id="new-speaker-time" class="form-control mb-2" placeholder="Время (сек)" min="10" required>
-            <button id="add-speaker-button" class="btn btn-primary w-100">Добавить докладчика</button>
+        <form id="add-speaker-form" class="mb-4 p-3 border rounded bg-light-subtle">
+            <fieldset>
+                <legend class="fw-medium">Новый докладчик</legend>
+                <input type="text" id="new-speaker-name" class="form-control mb-2" placeholder="ФИО" required>
+                <input type="text" id="new-speaker-topic" class="form-control mb-2" placeholder="Тема" required>
+                <input type="number" id="new-speaker-time" class="form-control mb-3" placeholder="Время (сек)" min="10" required>
+            </fieldset>
+
+            <button id="add-speaker-button" class="btn btn-primary w-100">Добавить</button>
         </form>
 
-        <form id="time-control-form" class="mb-3">
-            <input type="number" id="extra-time-input" class="form-control mb-2" placeholder="Доп. время (сек)" />
-            <button id="add-time-button" class="btn btn-primary w-100">Добавить время</button>
+        <form id="time-control-form" class="mb-4 p-3 border rounded bg-light-subtle">
+            <fieldset>
+                <legend class="fw-medium">Дополнительное время</legend>
+                <input type="number" id="extra-time-input" class="form-control mb-3" placeholder="Время (сек)" />
+            </fieldset>
+
+            <button id="add-time-button" class="btn btn-primary w-100">Добавить</button>
         </form>
 
         <button id="toggle-conference-button" class="btn btn-success w-100">Запустить таймер</button>
@@ -30,9 +38,9 @@
 
             {% for speaker in speakers %}
             <button type="button" class="speaker-item list-group-item list-group-item-action {% if speaker.id == current_speaker.id %}active{% endif %}" data-id="{{ speaker.id }}" data-name="{{ speaker.full_name }}" data-time-limit="{{ speaker.time_limit_seconds }}">
-                <span class="speaker-name">{{ speaker.short_name }}</span>
+                <span class="speaker-name fw-semibold">{{ speaker.short_name }}</span>
                 <span class="speaker-topic text-truncate">&laquo;{{ speaker.topic }}&raquo;</span>
-                <span class="speaker-time">{{ speaker.time_limit_formatted|default:"00:00" }}</span>
+                <span class="speaker-time badge text-bg-primary">{{ speaker.time_limit_formatted|default:"00:00" }}</span>
 
                 <span class="icon-wrapper delete-speaker text-dark">
                     <!-- <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" stroke="currentColor" stroke-width=".2" viewBox="0 0 16 16"> -->
