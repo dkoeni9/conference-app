@@ -21,7 +21,7 @@ if (CLEAR_CLIENT_STORAGE_ON_LOAD) {
 }
 
 
-const logoWrapper = document.querySelector("#logo-wrapper");
+const logo = document.getElementById("logo");
 const speaker = document.querySelector("#speaker");
 
 const scheme = window.location.protocol === "https:" ? "wss" : "ws";
@@ -71,21 +71,35 @@ function connectWebSocket() {
         const speakerTopic = document.getElementById("speaker-topic");
         const speakerTime = document.getElementById("speaker-time");
 
+        // Show or hide logo and speaker info
         if (!data.current_speaker) {
-            logoWrapper.style.display = "flex";
-            speaker.style.display = "none";
+            logo.classList.remove("d-none");
+            logo.classList.add("d-block");
+
+            speaker.classList.remove("d-block");
+            speaker.classList.add("d-none");
 
             return;
         } else {
-            logoWrapper.style.display = "none";
-            speaker.style.display = "block";
+            speaker.classList.remove("d-none");
+            speaker.classList.add("d-block");
+
+            logo.classList.remove("d-block");
+            logo.classList.add("d-none");
         }
 
         if (speakerName) speakerName.textContent = data.current_speaker || "-";
-        if (speakerTopic) speakerTopic.textContent = data.topic || "-";
+        if (speakerTopic) speakerTopic.textContent = `«${data.topic}»` || "-";
+        const isRunning = !!data.is_running;
         const displaySeconds =
             data.time_limit != null ? data.time_limit : data.remaining_time || 0;
-        if (speakerTime) speakerTime.textContent = formatTime(displaySeconds);
+        if (isRunning) {
+            speakerTime.textContent = formatTime(displaySeconds);
+            speakerTime.classList.remove("d-none");
+        } else {
+            speakerTime.textContent = "";
+            speakerTime.classList.add("d-none");
+        }
     });
 }
 
