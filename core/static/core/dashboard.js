@@ -53,7 +53,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     // Reset state
                     noSpeakerBtn.classList.add("active");
                     state.speakerId = null;
-                    await api.setSpeaker("");
+                    await api.setSpeaker();
 
                     if (state.conferenceRunning) toggleBtn.click();
                 }
