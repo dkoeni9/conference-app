@@ -20,6 +20,13 @@ document.addEventListener("DOMContentLoaded", function () {
     // Ensure initial state for delete icons
     updateSpeakerItemStyles();
 
+    function renderTimeInSpan(timeSpan, seconds) {
+        if (!timeSpan) return;
+        timeSpan.textContent = formatTime(seconds);
+        // toggle danger when <= 10 seconds
+        timeSpan.classList.toggle("text-bg-danger", seconds <= 10);
+    }
+
 
     speakerList.addEventListener("click", async (event) => {
         const btn = event.target.closest(".list-group-item");
@@ -119,10 +126,12 @@ document.addEventListener("DOMContentLoaded", function () {
         const extraTime = parseInt(extraTimeInput.value) || 0;
         if (!extraTime) return;
 
-        state.timeLimit += extraTime;
+        state.timeLimit = Math.max(0, state.timeLimit + extraTime);
 
         const timeSpan = speakerList.querySelector(".list-group-item.active .speaker-time");
-        if (timeSpan) timeSpan.textContent = formatTime(state.timeLimit);
+        if (timeSpan) {
+            renderTimeInSpan(timeSpan, state.timeLimit);
+        }
 
         const activeBtn = speakerList.querySelector(".list-group-item.active");
         if (activeBtn) activeBtn.dataset.timeLimit = String(state.timeLimit);
@@ -149,10 +158,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (state.conferenceRunning) {
             state.timerInterval = setInterval(async () => {
-                state.timeLimit -= 1;
+                state.timeLimit = Math.max(0, state.timeLimit - 1);
 
                 const timeSpan = speakerList.querySelector(".list-group-item.active .speaker-time");
-                if (timeSpan) timeSpan.textContent = formatTime(state.timeLimit);
+                if (timeSpan) {
+                    renderTimeInSpan(timeSpan, state.timeLimit);
+                }
 
                 try {
                     await api.updateTime(state.speakerId, "action=tick");

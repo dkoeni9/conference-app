@@ -148,7 +148,9 @@ def update_time(request, speaker_id):
             speaker.time_limit += timedelta(seconds=extra)
 
         elif action == "tick":
-            speaker.time_limit -= timedelta(seconds=1)
+            speaker.time_limit = max(
+                speaker.time_limit - timedelta(seconds=1), timedelta(seconds=0)
+            )
 
         elif action == "start":
             conference.is_running = True

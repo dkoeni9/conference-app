@@ -63,6 +63,9 @@ class Speaker(models.Model):
             if getattr(self, "topic", None):
                 self.topic = self._normalize_text(self.topic)
 
+        if self.time_limit.total_seconds() < 0:
+            self.time_limit = timedelta(seconds=0)
+
         super().save(
             *args,
             force_insert=force_insert,

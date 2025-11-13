@@ -47,7 +47,7 @@
             <button type="button" class="speaker-item list-group-item list-group-item-action {% if speaker.id == current_speaker.id %}active{% endif %}" data-id="{{ speaker.id }}" data-name="{{ speaker.full_name }}" data-time-limit="{{ speaker.time_limit_seconds }}">
                 <span class="speaker-name fw-semibold">{{ speaker.short_name }}</span>
                 <span class="speaker-topic text-truncate">&laquo;{{ speaker.topic }}&raquo;</span>
-                <span class="speaker-time badge text-bg-primary">{{ speaker.time_limit_formatted|default:"00:00" }}</span>
+                <span class="speaker-time badge {% if speaker.time_limit_seconds < 11 %}text-bg-danger{% else %}text-bg-primary{% endif %}">{{ speaker.time_limit_formatted|default:"00:00" }}</span>
 
                 <span class="icon-wrapper delete-speaker text-dark">
                     <!-- <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" stroke="currentColor" stroke-width=".2" viewBox="0 0 16 16"> -->

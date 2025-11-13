@@ -32,6 +32,12 @@ let ws;
 let pingInterval;
 let reconnectAttempts = 0;
 
+// Track visibility flags: pending (from server) and applied (currently shown)
+let pendingShowName = true;
+let pendingShowTopic = true;
+let appliedShowName = true;
+let appliedShowTopic = true;
+
 function connectWebSocket() {
     ws = new WebSocket(`${scheme}://${host}${port}/ws/conference/`);
 
@@ -71,6 +77,10 @@ function connectWebSocket() {
         const speakerTopic = document.getElementById("speaker-topic");
         const speakerTime = document.getElementById("speaker-time");
 
+        // update pending flags from server (but don't force-apply when stopped)
+        if ("show_name" in data) pendingShowName = !!data.show_name;
+        if ("show_topic" in data) pendingShowTopic = !!data.show_topic;
+
         // Show or hide logo and speaker info
         if (!data.current_speaker) {
             logo.classList.remove("d-none");
@@ -88,34 +98,49 @@ function connectWebSocket() {
             logo.classList.add("d-none");
         }
 
+        // Always update text content
         if (speakerName) {
-            if (data.show_name) {
-                speakerName.textContent = data.current_speaker || "-";
-                speakerName.classList.remove("d-none");
-            } else {
-                speakerName.textContent = "";
-                speakerName.classList.add("d-none");
-            }
+            speakerName.textContent = data.current_speaker || "-";
         }
-
         if (speakerTopic) {
-            if (data.show_topic) {
-                speakerTopic.textContent = `«${data.topic}»` || "-";
-                speakerTopic.classList.remove("d-none");
-            } else {
-                speakerTopic.textContent = "";
-                speakerTopic.classList.add("d-none");
-            }
+            speakerTopic.textContent = `«${data.topic}»` || "-";
         }
 
         const isRunning = !!data.is_running;
         const displaySeconds = data.time_limit != null ? data.time_limit : data.remaining_time || 0;
         if (isRunning) {
-            speakerTime.textContent = formatTime(displaySeconds);
-            speakerTime.classList.remove("d-none");
+            // Apply pending visibility flags when timer is running
+            if (speakerTime) {
+                speakerTime.textContent = formatTime(displaySeconds);
+                speakerTime.classList.remove("d-none");
+
+                speakerTime.classList.toggle("text-danger", displaySeconds <= 10);
+            }
+
+            if (speakerName) {
+                speakerName.classList.toggle("d-none", !pendingShowName);
+                appliedShowName = pendingShowName;
+            }
+
+            if (speakerTopic) {
+                speakerTopic.classList.toggle("d-none", !pendingShowTopic);
+                appliedShowTopic = pendingShowTopic;
+            }
         } else {
-            speakerTime.textContent = "";
-            speakerTime.classList.add("d-none");
+            // When stopped: always show name and topic, hide timer.
+            if (speakerTime) {
+                speakerTime.textContent = "";
+                speakerTime.classList.add("d-none");
+            }
+
+            if (speakerName) {
+                speakerName.classList.remove("d-none");
+                appliedShowName = true;
+            }
+            if (speakerTopic) {
+                speakerTopic.classList.remove("d-none");
+                appliedShowTopic = true;
+            }
         }
     });
 }
