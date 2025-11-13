@@ -15,7 +15,7 @@ export function createSpeakerButton(speaker) {
     button.innerHTML = `
     <span class="speaker-name">${shortName}</span>
     <span class="speaker-topic text-truncate">&laquo;${speaker.topic}&raquo;</span>
-    <span class="speaker-time">${formatTime(speaker.time_limit_seconds)}</span>
+    <span class="speaker-time badge text-bg-primary">${formatTime(speaker.time_limit_seconds)}</span>
     <span class="icon-wrapper delete-speaker text-dark">
         <!-- <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" stroke="currentColor" stroke-width=".2" viewBox="0 0 16 16"> -->
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">

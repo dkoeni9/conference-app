@@ -6,13 +6,17 @@
 {% block main %}
 
 <div class="d-flex flex-column justify-content-center align-items-center h-100">
-    <section id="speaker" class="text-center">
-        <h1 id="speaker-topic" class="display-1 fw-bold">{{ current_speaker.topic }}</h1>
+    <div class="alert alert-info" role="alert">
+        Для перехода в полноэкранный режим нажмите клавишу F.
+    </div>
+
+    <section id="speaker" class="text-center text-light {% if current_speaker %}d-block{% else %}d-none{% endif %}">
+        <h1 id="speaker-topic" class="display-1 fw-bold">&laquo;{{ current_speaker.topic }}&raquo;</h1>
         <p id="speaker-name" class="fs-1">{{ current_speaker.full_name }}</p>
         <p id="speaker-time" class="fs-2 ">{{ current_speaker.time_limit_formatted}}</p>
     </section>
 
-    <div id="logo-wrapper"><img id="logo" class="img-fluid object-fit-contain" src="{% static 'core/img/logo.png' %}" alt="Logo"></div>
+    <img id="logo" class="img-fluid object-fit-contain {% if not current_speaker %}d-block{% else %}d-none{% endif %}" src="{% static 'core/img/logo.png' %}" alt="Logo">
 </div>
 
 {% endblock %}

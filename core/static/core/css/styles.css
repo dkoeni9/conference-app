@@ -12,14 +12,8 @@ body {
 }
 
 /* logotype */
-#logo-wrapper {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-}
 
-#logo-wrapper #logo {
+img #logo {
     max-width: 90vw;
     max-height: 80vh;
     width: auto;
@@ -56,4 +50,12 @@ body {
 .icon-wrapper svg {
     display: block;
     margin: 0 auto;
+}
+
+.bg-screen {
+    background-image: url("../img/background.jpg");
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
 }
