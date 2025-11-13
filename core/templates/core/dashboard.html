@@ -6,7 +6,7 @@
 {% block main %}
 <section class="row g-4">
 
-    <div class="col-md-4">
+    <div class="col-md-4 col-lg-3">
         <form id="add-speaker-form" class="mb-4 p-3 border rounded bg-light-subtle">
             <fieldset>
                 <legend class="fw-medium">Новый докладчик</legend>
@@ -37,7 +37,7 @@
         <button id="toggle-conference-button" class="btn btn-success w-100">Запустить таймер</button>
     </div>
 
-    <div class=" col-md-8">
+    <div class=" col-md-8 col-lg-9">
         <div id="speaker-list" class="list-group list-group-numbered">
             <button type="button" class="list-group-item list-group-item-action {% if not current_speaker %}active{% endif %} no-number" data-id="" data-name="" data-time-limit="0">
                 Не выбран
