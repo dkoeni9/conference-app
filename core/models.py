@@ -80,6 +80,9 @@ class Conference(models.Model):
         Speaker, on_delete=models.SET_NULL, null=True, blank=True
     )
     is_running = models.BooleanField(default=False)
+    # Visibility flags
+    show_name = models.BooleanField(default=True)
+    show_topic = models.BooleanField(default=True)
 
     def __str__(self):
         return f"Выступает: {self.speaker}"

@@ -10,6 +10,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const activeBtn = document.querySelector("#speaker-list .list-group-item.active");
     const toggleBtn = document.querySelector("#toggle-conference-button");
     const extraTimeInput = document.getElementById("extra-time-input");
+    const onlyTimerToggle = document.getElementById("toggle-only-timer");
 
     state.speakerId = activeBtn?.dataset.id || null;
     state.timeLimit = parseInt(activeBtn?.dataset.timeLimit || "0", 10);
@@ -194,6 +195,17 @@ document.addEventListener("DOMContentLoaded", function () {
         } catch (error) {
             console.error("Ошибка добавления:", error);
             alert(error.message);
+        }
+    });
+
+    onlyTimerToggle.addEventListener("change", async () => {
+        const value = !onlyTimerToggle.checked;
+        const body = `show_name=${value}&show_topic=${value}`;
+
+        try {
+            await api.setVisibility(body);
+        } catch (error) {
+            console.error("Ошибка при сохранении видимости:", error);
         }
     });
 });

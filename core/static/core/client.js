@@ -88,11 +88,28 @@ function connectWebSocket() {
             logo.classList.add("d-none");
         }
 
-        if (speakerName) speakerName.textContent = data.current_speaker || "-";
-        if (speakerTopic) speakerTopic.textContent = `«${data.topic}»` || "-";
+        if (speakerName) {
+            if (data.show_name) {
+                speakerName.textContent = data.current_speaker || "-";
+                speakerName.classList.remove("d-none");
+            } else {
+                speakerName.textContent = "";
+                speakerName.classList.add("d-none");
+            }
+        }
+
+        if (speakerTopic) {
+            if (data.show_topic) {
+                speakerTopic.textContent = `«${data.topic}»` || "-";
+                speakerTopic.classList.remove("d-none");
+            } else {
+                speakerTopic.textContent = "";
+                speakerTopic.classList.add("d-none");
+            }
+        }
+
         const isRunning = !!data.is_running;
-        const displaySeconds =
-            data.time_limit != null ? data.time_limit : data.remaining_time || 0;
+        const displaySeconds = data.time_limit != null ? data.time_limit : data.remaining_time || 0;
         if (isRunning) {
             speakerTime.textContent = formatTime(displaySeconds);
             speakerTime.classList.remove("d-none");

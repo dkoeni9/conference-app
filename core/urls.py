@@ -13,6 +13,7 @@ urlpatterns = [
     ),
     path("set-speaker/", views.set_speaker, name="unset_speaker"),
     path("set-speaker/<int:speaker_id>/", views.set_speaker, name="set_speaker"),
+    path("set-visibility/", views.set_visibility, name="set_visibility"),
     #
     path("login/", views.CustomLoginView.as_view(), name="login"),
     path("logout/", auth_views.LogoutView.as_view(next_page="login"), name="logout"),

@@ -22,6 +22,7 @@ def dashboard(request):
         "core/dashboard.html",
         {
             "speakers": speakers,
+            "conference": conference,
             "current_speaker": current_speaker,
         },
     )
@@ -103,6 +104,28 @@ def set_speaker(request, speaker_id=None):
             "time_limit": int(
                 getattr(speaker, "time_limit", timedelta()).total_seconds()
             ),
+        }
+    )
+
+
+@login_required
+@user_passes_test(is_operator)
+@require_POST
+def set_visibility(request):
+    """Operator: toggle visibility flags and broadcast to clients"""
+
+    conference, _ = Conference.objects.get_or_create()
+
+    conference.show_name = request.POST.get("show_name") == "true"
+    conference.show_topic = request.POST.get("show_topic") == "true"
+
+    conference.save()
+    broadcast_conference_update()
+
+    return JsonResponse(
+        {
+            "show_name": conference.show_name,
+            "show_topic": conference.show_topic,
         }
     )
 

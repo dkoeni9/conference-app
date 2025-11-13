@@ -45,10 +45,14 @@ class ConferenceConsumer(AsyncWebsocketConsumer):
                 "topic": getattr(speaker, "topic", ""),
                 "time_limit": int(time_limit.total_seconds()),
                 "is_running": conference.is_running,
+                "show_name": conference.show_name,
+                "show_topic": conference.show_topic,
             }
         return {
             "current_speaker": None,
             "topic": None,
             "time_limit": 0,
             "is_running": False,
+            "show_name": True,
+            "show_topic": True,
         }

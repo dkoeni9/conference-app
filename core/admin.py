@@ -10,8 +10,8 @@ class SpeakerAdmin(admin.ModelAdmin):
 
 @admin.register(Conference)
 class ConferenceAdmin(admin.ModelAdmin):
-    list_display = ("speaker", "is_running")
-    list_editable = ("is_running",)
+    list_display = ("speaker", "is_running", "show_name", "show_topic")
+    list_editable = ("is_running", "show_name", "show_topic")
 
     def has_add_permission(self, request):
         if Conference.objects.exists():

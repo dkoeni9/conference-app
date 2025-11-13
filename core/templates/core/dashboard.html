@@ -27,6 +27,13 @@
             <button id="add-time-button" class="btn btn-primary w-100">Добавить</button>
         </form>
 
+        <form class="mb-4 p-3 border rounded bg-light-subtle">
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="toggle-only-timer" {% if conference and conference.show_name and conference.show_topic %}checked{% endif %}>
+                <label class="form-check-label" for="toggle-only-timer">Только таймер</label>
+            </div>
+        </form>
+
         <button id="toggle-conference-button" class="btn btn-success w-100">Запустить таймер</button>
     </div>
 

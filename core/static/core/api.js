@@ -30,11 +30,12 @@ async function request(url, options = {}) {
 }
 
 export const api = {
+    addSpeaker: (body) => request("/add-speaker/", { method: "POST", body }),
+    deleteSpeaker: (id) => request(`/delete-speaker/${id}/`, { method: "POST", body: "" }),
     setSpeaker(id = "") {
         const url = id ? `/set-speaker/${encodeURIComponent(id)}/` : `/set-speaker/`;
         return request(url, { method: "POST", body: "" });
     },
-    deleteSpeaker: (id) => request(`/delete-speaker/${id}/`, { method: "POST", body: "" }),
+    setVisibility: (body) => request("/set-visibility/", { method: "POST", body }),
     updateTime: (id, body) => request(`/update-time/${id}/`, { method: "POST", body }),
-    addSpeaker: (body) => request("/add-speaker/", { method: "POST", body }),
 };
