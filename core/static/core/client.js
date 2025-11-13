@@ -115,6 +115,7 @@ function connectWebSocket() {
                 speakerTime.classList.remove("d-none");
 
                 speakerTime.classList.toggle("text-danger", displaySeconds <= 10);
+                speakerTime.classList.toggle("blink", displaySeconds === 0);
             }
 
             if (speakerName) {

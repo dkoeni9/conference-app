@@ -59,3 +59,11 @@ img #logo {
     background-repeat: no-repeat;
     background-attachment: fixed;
 }
+
+@keyframes blink {
+    50% { opacity: 0; }
+}
+
+.blink {
+    animation: blink 1s step-start infinite;
+}
