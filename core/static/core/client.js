@@ -24,6 +24,9 @@ if (CLEAR_CLIENT_STORAGE_ON_LOAD) {
 const logo = document.getElementById("logo");
 const speaker = document.querySelector("#speaker");
 
+const beepSound = document.getElementById("beep-sound");
+let hasPlayedBeep = false;
+
 const scheme = window.location.protocol === "https:" ? "wss" : "ws";
 const host = window.location.hostname || "127.0.0.1";
 const port = window.location.port ? `:${window.location.port}` : "";
@@ -116,6 +119,16 @@ function connectWebSocket() {
 
                 speakerTime.classList.toggle("text-danger", displaySeconds <= 10);
                 speakerTime.classList.toggle("blink", displaySeconds === 0);
+            }
+
+            if (displaySeconds === 0 && !hasPlayedBeep) {
+                hasPlayedBeep = true;
+                if (beepSound) {
+                    beepSound.currentTime = 0;
+                    beepSound.play().catch(err => console.warn("Beep play error:", err));
+                }
+            } else if (displaySeconds > 0) {
+                hasPlayedBeep = false;
             }
 
             if (speakerName) {

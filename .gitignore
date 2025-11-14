@@ -297,3 +297,4 @@ pip-selfcheck.json
 # End of https://www.toptal.com/developers/gitignore/api/venv,django,python,visualstudiocode
 
 core/static/core/img/*
+core/static/core/sounds/*

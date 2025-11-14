@@ -13,7 +13,7 @@
     <section id="speaker" class="text-center text-light {% if current_speaker %}d-block{% else %}d-none{% endif %}">
         <h1 id="speaker-topic" class="display-1 fw-bold">&laquo;{{ current_speaker.topic }}&raquo;</h1>
         <p id="speaker-name" class="fs-1">{{ current_speaker.full_name }}</p>
-        <p id="speaker-time" class="fs-2 ">{{ current_speaker.time_limit_formatted}}</p>
+        <p id="speaker-time" class="fs-2 fw-bold">{{ current_speaker.time_limit_formatted}}</p>
     </section>
 
     <img id="logo" class="img-fluid object-fit-contain {% if not current_speaker %}d-block{% else %}d-none{% endif %}" src="{% static 'core/img/logo.png' %}" alt="Logo">
@@ -24,4 +24,5 @@
 {% block scripts %}
 <script type="module" src="{% static 'core/client.js' %}"></script>
 <script type="module" src="{% static 'core/fullscreen.js' %}"></script>
+<audio id="beep-sound" src="{% static 'core/sounds/beep-1.mp3' %}" preload="auto"></audio>
 {% endblock %}
