@@ -8,9 +8,14 @@ document.addEventListener("DOMContentLoaded", function () {
     const speakerList = document.getElementById("speaker-list");
     const noSpeakerBtn = speakerList.querySelector(".no-number");
     const activeBtn = document.querySelector("#speaker-list .list-group-item.active");
-    const toggleBtn = document.querySelector("#toggle-conference-button");
+
+    const timeControlForm = document.getElementById("time-control-form");
     const extraTimeInput = document.getElementById("extra-time-input");
+
     const onlyTimerToggle = document.getElementById("toggle-only-timer");
+
+    const toggleConferenceBtn = document.querySelector("#toggle-conference-button");
+    const resetTimeBtn = document.getElementById("reset-time-button");
 
     state.speakerId = activeBtn?.dataset.id || null;
     state.timeLimit = parseInt(activeBtn?.dataset.timeLimit || "0", 10);
@@ -48,9 +53,9 @@ document.addEventListener("DOMContentLoaded", function () {
                             clearInterval(state.timerInterval);
                             state.timerInterval = null;
 
-                            toggleBtn.textContent = "Запустить таймер";
-                            toggleBtn.classList.remove("btn-danger");
-                            toggleBtn.classList.add("btn-success");
+                            toggleConferenceBtn.textContent = "Запустить";
+                            toggleConferenceBtn.classList.remove("btn-danger");
+                            toggleConferenceBtn.classList.add("btn-success");
 
                             await api.updateTime(state.speakerId, "action=stop");
                         } catch (error) {
@@ -63,7 +68,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     state.speakerId = null;
                     await api.setSpeaker();
 
-                    if (state.conferenceRunning) toggleBtn.click();
+                    if (state.conferenceRunning) toggleConferenceBtn.click();
                 }
 
                 await api.deleteSpeaker(speakerIdToDelete);
@@ -95,9 +100,9 @@ document.addEventListener("DOMContentLoaded", function () {
             clearInterval(state.timerInterval);
             state.timerInterval = null;
 
-            toggleBtn.textContent = "Запустить таймер";
-            toggleBtn.classList.remove("btn-danger");
-            toggleBtn.classList.add("btn-success");
+            toggleConferenceBtn.textContent = "Запустить";
+            toggleConferenceBtn.classList.remove("btn-danger");
+            toggleConferenceBtn.classList.add("btn-success");
 
             try {
                 await api.updateTime(prevSpeakerId, "action=stop");
@@ -119,7 +124,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
 
-    document.getElementById("time-control-form").addEventListener("submit", async (event) => {
+    timeControlForm.addEventListener("submit", async (event) => {
         event.preventDefault();
         if (!state.speakerId) return;
 
@@ -146,13 +151,13 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
 
-    toggleBtn.addEventListener("click", async () => {
+    toggleConferenceBtn.addEventListener("click", async () => {
         if (!state.speakerId) return;
 
         state.conferenceRunning = !state.conferenceRunning;
-        toggleBtn.textContent = state.conferenceRunning ? "Остановить таймер" : "Запустить таймер";
-        toggleBtn.classList.toggle("btn-danger", state.conferenceRunning);
-        toggleBtn.classList.toggle("btn-success", !state.conferenceRunning);
+        toggleConferenceBtn.textContent = state.conferenceRunning ? "Остановить" : "Запустить";
+        toggleConferenceBtn.classList.toggle("btn-danger", state.conferenceRunning);
+        toggleConferenceBtn.classList.toggle("btn-success", !state.conferenceRunning);
 
         await api.updateTime(state.speakerId, `action=${state.conferenceRunning ? "start" : "stop"}`);
 
@@ -209,6 +214,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
+
     onlyTimerToggle.addEventListener("change", async () => {
         const value = !onlyTimerToggle.checked;
         const body = `show_name=${value}&show_topic=${value}`;
@@ -218,5 +224,18 @@ document.addEventListener("DOMContentLoaded", function () {
         } catch (error) {
             console.error("Ошибка при сохранении видимости:", error);
         }
+    });
+
+
+    resetTimeBtn.addEventListener("click", () => {
+        const activeBtn = document.querySelector("#speaker-list .list-group-item.active");
+        if (!activeBtn) return;
+
+        const currentTime = parseInt(activeBtn.dataset.timeLimit || "0", 10);
+        if (currentTime <= 0) return;
+
+        extraTimeInput.value = -currentTime;
+
+        timeControlForm.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }));
     });
 });

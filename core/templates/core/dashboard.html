@@ -6,10 +6,11 @@
 {% block main %}
 <section class="row g-4">
 
-    <div class="col-md-4 col-lg-3">
+    <div class="col-md-6 col-lg-5 col-xl-4 col-xxl-3">
         <form id="add-speaker-form" class="mb-4 p-3 border rounded bg-light-subtle">
             <fieldset>
                 <legend class="fw-medium">Новый докладчик</legend>
+
                 <input type="text" id="new-speaker-name" class="form-control mb-2" placeholder="ФИО" required>
                 <input type="text" id="new-speaker-topic" class="form-control mb-2" placeholder="Тема" required>
                 <input type="text" id="new-speaker-time" class="form-control mb-3" placeholder="Время (ММ:СС)" required>
@@ -20,24 +21,35 @@
 
         <form id="time-control-form" class="mb-4 p-3 border rounded bg-light-subtle">
             <fieldset>
-                <legend class="fw-medium">Изменить время</legend>
-                <input type="text" id="extra-time-input" class="form-control mb-3" placeholder="Время (+-ММ:СС)" />
+                <legend class="fw-medium mb-0">Таймер</legend>
+
+                <div class="row g-2 mb-2">
+                    <div class="col-8">
+                        <input type="text" id="extra-time-input" class="form-control h-100" placeholder="Время (+-ММ:СС)" />
+                    </div>
+                    <div class="col-4">
+                        <button id="add-time-button" class="btn btn-primary w-100">
+                            <svg class="d-block my-0 mx-auto" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" stroke="currentColor" stroke-width=".8" viewBox="0 0 16 16">
+                                <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
             </fieldset>
 
-            <button id="add-time-button" class="btn btn-primary w-100">Применить</button>
+            <button type="button" id="reset-time-button" class="btn btn-warning w-100 mb-2">Обнулить</button>
+            <button type="button" id="toggle-conference-button" class="btn btn-success w-100 ">Запустить</button>
         </form>
 
-        <form class="mb-4 p-3 border rounded bg-light-subtle">
+        <form class="p-3 border rounded bg-light-subtle">
             <div class="form-check form-switch">
                 <input class="form-check-input" type="checkbox" id="toggle-only-timer" {% if conference and not conference.show_name and not conference.show_topic %}checked{% endif %}>
-                <label class="form-check-label" for="toggle-only-timer">Только таймер</label>
+                <label class="form-check-label" for="toggle-only-timer">Скрыть имя и тему</label>
             </div>
         </form>
-
-        <button id="toggle-conference-button" class="btn btn-success w-100">Запустить таймер</button>
     </div>
 
-    <div class=" col-md-8 col-lg-9">
+    <div class=" col-md-6 col-lg-7 col-xl-8 col-xxl-9">
         <div id="speaker-list" class="list-group list-group-numbered">
             <button type="button" class="list-group-item list-group-item-action {% if not current_speaker %}active{% endif %} no-number" data-id="" data-name="" data-time-limit="0">
                 Не выбран
