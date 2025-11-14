@@ -12,7 +12,7 @@
                 <legend class="fw-medium">Новый докладчик</legend>
                 <input type="text" id="new-speaker-name" class="form-control mb-2" placeholder="ФИО" required>
                 <input type="text" id="new-speaker-topic" class="form-control mb-2" placeholder="Тема" required>
-                <input type="number" id="new-speaker-time" class="form-control mb-3" placeholder="Время (сек)" min="10" required>
+                <input type="text" id="new-speaker-time" class="form-control mb-3" placeholder="Время (ММ:СС)" required>
             </fieldset>
 
             <button id="add-speaker-button" class="btn btn-primary w-100">Добавить</button>
@@ -20,11 +20,11 @@
 
         <form id="time-control-form" class="mb-4 p-3 border rounded bg-light-subtle">
             <fieldset>
-                <legend class="fw-medium">Дополнительное время</legend>
-                <input type="number" id="extra-time-input" class="form-control mb-3" placeholder="Время (сек)" />
+                <legend class="fw-medium">Изменить время</legend>
+                <input type="text" id="extra-time-input" class="form-control mb-3" placeholder="Время (+-ММ:СС)" />
             </fieldset>
 
-            <button id="add-time-button" class="btn btn-primary w-100">Добавить</button>
+            <button id="add-time-button" class="btn btn-primary w-100">Применить</button>
         </form>
 
         <form class="mb-4 p-3 border rounded bg-light-subtle">

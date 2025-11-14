@@ -1,6 +1,6 @@
 import { api } from "./api.js";
 import { addSpeakerButton, updateSpeakerItemStyles } from "./dom.js";
-import { formatTime } from "./shared.js";
+import { formatTime, parseTime } from "./shared.js";
 import { state } from "./state.js";
 
 
@@ -123,7 +123,7 @@ document.addEventListener("DOMContentLoaded", function () {
         event.preventDefault();
         if (!state.speakerId) return;
 
-        const extraTime = parseInt(extraTimeInput.value) || 0;
+        const extraTime = parseTime(extraTimeInput.value);
         if (!extraTime) return;
 
         state.timeLimit = Math.max(0, state.timeLimit + extraTime);
@@ -182,7 +182,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const name = document.getElementById("new-speaker-name").value.trim();
         const topic = document.getElementById("new-speaker-topic").value.trim();
-        const time = parseInt(document.getElementById("new-speaker-time").value, 10);
+        const time = parseTime(document.getElementById("new-speaker-time").value);
 
         // if (!name || !topic || !time) {
         //     alert("Пожалуйста, заполните все поля");
