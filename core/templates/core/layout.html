@@ -8,6 +8,7 @@
         <title>{% block title %}Конференция{% endblock %}</title>
         <link rel="stylesheet" href="{% static 'core/css/bootstrap.min.css' %}">
         <link rel="stylesheet" href="{% static 'core/css/styles.css' %}">
+        <link rel="icon" type="image/png" href="{% static 'core/img/logo-square.png' %}">
         <script>
             var csrftoken = '{{ csrf_token }}';
         </script>
@@ -18,9 +19,11 @@
         <header class="w-100">
             <nav class="navbar navbar-expand-lg bg-primary">
                 <div class="container">
-                    <a href="{{ logo_url }}">
-                        <img src="{% static 'core/img/logo-square.png' %}" alt="Logo" height="48">
+                    <a class="navbar-brand d-flex align-items-center text-light" href="{{ logo_url }}">
+                        <img src="{% static 'core/img/logo-square-alt.png' %}" alt="Logo" height="48" class="d-inline-block me-2">
+                        МИНТРАНС РОССИИ
                     </a>
+
                     <form method="post" action="{% url 'logout' %}" class="d-flex ms-auto">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-light">Сменить пользователя</button>
