@@ -32,6 +32,14 @@ document.addEventListener("DOMContentLoaded", function () {
         timeSpan.classList.toggle("text-bg-danger", seconds <= 10);
     }
 
+    function saveCurrentTimeToDataset(speakerId) {
+        if (!speakerId) return;
+        const btn = speakerList.querySelector(`.list-group-item[data-id="${speakerId}"]`);
+        if (btn) {
+            btn.dataset.timeLimit = String(state.timeLimit);
+        }
+    }
+
 
     speakerList.addEventListener("click", async (event) => {
         const btn = event.target.closest(".list-group-item");
@@ -86,7 +94,6 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        // Stop timer if switching speakers
         const prevSpeakerId = state.speakerId;
         const newSpeakerId = btn.dataset.id || "";
 
@@ -95,10 +102,13 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
+        // Stop timer if switching speakers
         if ((state.conferenceRunning && prevSpeakerId) && (prevSpeakerId !== newSpeakerId)) {
             state.conferenceRunning = false;
             clearInterval(state.timerInterval);
             state.timerInterval = null;
+
+            saveCurrentTimeToDataset(prevSpeakerId);
 
             toggleConferenceBtn.textContent = "Запустить";
             toggleConferenceBtn.classList.remove("btn-danger");
@@ -138,8 +148,7 @@ document.addEventListener("DOMContentLoaded", function () {
             renderTimeInSpan(timeSpan, state.timeLimit);
         }
 
-        const activeBtn = speakerList.querySelector(".list-group-item.active");
-        if (activeBtn) activeBtn.dataset.timeLimit = String(state.timeLimit);
+        saveCurrentTimeToDataset(state.speakerId);
 
         try {
             await api.updateTime(state.speakerId, `extra_time=${extraTime}`);
@@ -170,6 +179,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     renderTimeInSpan(timeSpan, state.timeLimit);
                 }
 
+                saveCurrentTimeToDataset(state.speakerId);
+
                 try {
                     await api.updateTime(state.speakerId, "action=tick");
                 } catch (error) {
@@ -178,6 +189,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }, 1000);
         } else {
             clearInterval(state.timerInterval);
+            saveCurrentTimeToDataset(state.speakerId);
         }
     });
 
