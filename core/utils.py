@@ -16,6 +16,19 @@ def broadcast_conference_update():
     )
 
 
+def broadcast_timer_tick():
+    """Только обновление таймера"""
+    channel_layer = get_channel_layer()
+    if channel_layer is None:
+        print("broadcast_timer_tick: no channel_layer")
+        return
+    print("broadcast_timer_tick: sending 'timer.tick' to group 'conference'")
+    async_to_sync(channel_layer.group_send)(
+        "conference",
+        {"type": "timer.tick"},
+    )
+
+
 def is_client(user):
     return user.groups.filter(name="client").exists()
 

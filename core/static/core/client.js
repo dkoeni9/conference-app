@@ -1,12 +1,7 @@
 import { formatTime } from "./shared.js";
 
-
-/*
-An attempt to clear local/session storage to avoid reusing client-side persisted state.
-*/
 const CLEAR_CLIENT_STORAGE_ON_LOAD = true;
 
-// Try to clear client-side storages to avoid remembering prior UI/session state.
 if (CLEAR_CLIENT_STORAGE_ON_LOAD) {
     try {
         localStorage.clear();
@@ -20,9 +15,11 @@ if (CLEAR_CLIENT_STORAGE_ON_LOAD) {
     }
 }
 
-
 const logo = document.getElementById("logo");
 const speaker = document.querySelector("#speaker");
+const speakerName = document.getElementById("speaker-name");
+const speakerTopic = document.getElementById("speaker-topic");
+const speakerTime = document.getElementById("speaker-time");
 
 const beepSound = document.getElementById("beep-sound");
 let hasPlayedBeep = false;
@@ -35,7 +32,6 @@ let ws;
 let pingInterval;
 let reconnectAttempts = 0;
 
-// Track visibility flags: pending (from server) and applied (currently shown)
 let pendingShowName = true;
 let pendingShowTopic = true;
 let appliedShowName = true;
@@ -48,7 +44,6 @@ function connectWebSocket() {
         console.info("✅ WS connected");
         reconnectAttempts = 0;
 
-        // Ping every 25 seconds 
         pingInterval = setInterval(() => {
             if (ws.readyState === WebSocket.OPEN) {
                 ws.send(JSON.stringify({ type: "ping" }));
@@ -76,87 +71,133 @@ function connectWebSocket() {
 
         console.debug("📨 WS message:", data);
 
-        const speakerName = document.getElementById("speaker-name");
-        const speakerTopic = document.getElementById("speaker-topic");
-        const speakerTime = document.getElementById("speaker-time");
-
-        // update pending flags from server (but don't force-apply when stopped)
-        if ("show_name" in data) pendingShowName = !!data.show_name;
-        if ("show_topic" in data) pendingShowTopic = !!data.show_topic;
-
-        // Show or hide logo and speaker info
-        if (!data.current_speaker) {
-            logo.classList.remove("d-none");
-            logo.classList.add("d-block");
-
-            speaker.classList.remove("d-block");
-            speaker.classList.add("d-none");
-
+        // Handle timer update
+        if (data.type === "timer_update") {
+            handleTimerUpdate(data);
             return;
-        } else {
-            speaker.classList.remove("d-none");
-            speaker.classList.add("d-block");
-
-            logo.classList.remove("d-block");
-            logo.classList.add("d-none");
         }
 
-        // Always update text content
+        // Handle full update
+        if (data.type === "full_update") {
+            handleFullUpdate(data);
+            return;
+        }
+
+        handleFullUpdate(data);
+    });
+}
+
+function handleTimerUpdate(data) {
+    const isRunning = !!data.is_running;
+    const displaySeconds = data.time_limit || 0;
+
+    if (!isRunning) {
+        // If timer is not running, hide it
+        if (speakerTime) {
+            speakerTime.textContent = "";
+            speakerTime.classList.add("d-none");
+        }
+        return;
+    }
+
+    // Update only timer display
+    if (speakerTime) {
+        speakerTime.textContent = formatTime(displaySeconds);
+        speakerTime.classList.remove("d-none");
+
+        speakerTime.classList.toggle("text-danger", displaySeconds <= 10);
+        speakerTime.classList.toggle("blink", displaySeconds === 0);
+    }
+
+    // Handle beep sound
+    if (displaySeconds === 0 && !hasPlayedBeep) {
+        hasPlayedBeep = true;
+        if (beepSound) {
+            beepSound.currentTime = 0;
+            beepSound.play().catch(err => console.warn("Beep play error:", err));
+        }
+    } else if (displaySeconds > 0) {
+        hasPlayedBeep = false;
+    }
+}
+
+function handleFullUpdate(data) {
+    // Update pending flags
+    if ("show_name" in data) pendingShowName = !!data.show_name;
+    if ("show_topic" in data) pendingShowTopic = !!data.show_topic;
+
+    // Show/hide speaker section/logo
+    if (!data.current_speaker) {
+        logo.classList.remove("d-none");
+        logo.classList.add("d-block");
+
+        speaker.classList.remove("d-block");
+        speaker.classList.add("d-none");
+
+        return;
+    } else {
+        speaker.classList.remove("d-none");
+        speaker.classList.add("d-block");
+
+        logo.classList.remove("d-block");
+        logo.classList.add("d-none");
+    }
+
+    // Update speaker name and topic
+    if (speakerName) {
+        speakerName.textContent = data.current_speaker || "-";
+    }
+    if (speakerTopic) {
+        speakerTopic.textContent = `«${data.topic}»` || "-";
+    }
+
+    const isRunning = !!data.is_running;
+    const displaySeconds = data.time_limit != null ? data.time_limit : data.remaining_time || 0;
+
+    if (isRunning) {
+        if (speakerTime) {
+            speakerTime.textContent = formatTime(displaySeconds);
+            speakerTime.classList.remove("d-none");
+
+            speakerTime.classList.toggle("text-danger", displaySeconds <= 10);
+            speakerTime.classList.toggle("blink", displaySeconds === 0);
+        }
+
+        if (displaySeconds === 0 && !hasPlayedBeep) {
+            hasPlayedBeep = true;
+            if (beepSound) {
+                beepSound.currentTime = 0;
+                beepSound.play().catch(err => console.warn("Beep play error:", err));
+            }
+        } else if (displaySeconds > 0) {
+            hasPlayedBeep = false;
+        }
+
         if (speakerName) {
-            speakerName.textContent = data.current_speaker || "-";
+            speakerName.classList.toggle("d-none", !pendingShowName);
+            appliedShowName = pendingShowName;
+        }
+
+        if (speakerTopic) {
+            speakerTopic.classList.toggle("d-none", !pendingShowTopic);
+            appliedShowTopic = pendingShowTopic;
+        }
+    } else {
+        // Show name & topic when timer is not running
+        if (speakerTime) {
+            speakerTime.textContent = "";
+            speakerTime.classList.add("d-none");
+        }
+
+        if (speakerName) {
+            speakerName.classList.remove("d-none");
+            appliedShowName = true;
         }
         if (speakerTopic) {
-            speakerTopic.textContent = `«${data.topic}»` || "-";
+            speakerTopic.classList.remove("d-none");
+            appliedShowTopic = true;
         }
-
-        const isRunning = !!data.is_running;
-        const displaySeconds = data.time_limit != null ? data.time_limit : data.remaining_time || 0;
-        if (isRunning) {
-            // Apply pending visibility flags when timer is running
-            if (speakerTime) {
-                speakerTime.textContent = formatTime(displaySeconds);
-                speakerTime.classList.remove("d-none");
-
-                speakerTime.classList.toggle("text-danger", displaySeconds <= 10);
-                speakerTime.classList.toggle("blink", displaySeconds === 0);
-            }
-
-            if (displaySeconds === 0 && !hasPlayedBeep) {
-                hasPlayedBeep = true;
-                if (beepSound) {
-                    beepSound.currentTime = 0;
-                    beepSound.play().catch(err => console.warn("Beep play error:", err));
-                }
-            } else if (displaySeconds > 0) {
-                hasPlayedBeep = false;
-            }
-
-            if (speakerName) {
-                speakerName.classList.toggle("d-none", !pendingShowName);
-                appliedShowName = pendingShowName;
-            }
-
-            if (speakerTopic) {
-                speakerTopic.classList.toggle("d-none", !pendingShowTopic);
-                appliedShowTopic = pendingShowTopic;
-            }
-        } else {
-            // When stopped: always show name and topic, hide timer.
-            if (speakerTime) {
-                speakerTime.textContent = "";
-                speakerTime.classList.add("d-none");
-            }
-
-            if (speakerName) {
-                speakerName.classList.remove("d-none");
-                appliedShowName = true;
-            }
-            if (speakerTopic) {
-                speakerTopic.classList.remove("d-none");
-                appliedShowTopic = true;
-            }
-        }
-    });
+    }
 }
 
 connectWebSocket();

@@ -27,20 +27,47 @@ class ConferenceConsumer(AsyncWebsocketConsumer):
             pass
 
     async def conference_update(self, event):
+        """Полное обновление (при смене докладчика)"""
         await self.send_current_state()
+
+    async def timer_tick(self, event):
+        """Обновление только таймера"""
+        data = await sync_to_async(self._get_timer_state, thread_sensitive=True)()
+        print("WS -> timer_tick:", data)
+        await self.send(text_data=json.dumps(data))
 
     async def send_current_state(self):
         data = await sync_to_async(self._get_current_state, thread_sensitive=True)()
         print("WS -> send_current_state:", data)
         await self.send(text_data=json.dumps(data))
 
-    def _get_current_state(self):
+    def _get_timer_state(self):
+        """Возвращает только данные таймера"""
         conference = Conference.objects.select_related("speaker").first()
         if conference and conference.speaker:
             speaker = conference.speaker
             time_limit = getattr(speaker, "time_limit", timedelta(0))
 
             return {
+                "type": "timer_update",
+                "time_limit": int(time_limit.total_seconds()),
+                "is_running": conference.is_running,
+            }
+        return {
+            "type": "timer_update",
+            "time_limit": 0,
+            "is_running": False,
+        }
+
+    def _get_current_state(self):
+        """Возвращает полное состояние"""
+        conference = Conference.objects.select_related("speaker").first()
+        if conference and conference.speaker:
+            speaker = conference.speaker
+            time_limit = getattr(speaker, "time_limit", timedelta(0))
+
+            return {
+                "type": "full_update",
                 "current_speaker": speaker.full_name,
                 "topic": getattr(speaker, "topic", ""),
                 "time_limit": int(time_limit.total_seconds()),
@@ -49,6 +76,7 @@ class ConferenceConsumer(AsyncWebsocketConsumer):
                 "show_topic": conference.show_topic,
             }
         return {
+            "type": "full_update",
             "current_speaker": None,
             "topic": None,
             "time_limit": 0,

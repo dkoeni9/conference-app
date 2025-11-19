@@ -7,7 +7,12 @@ from django.urls import reverse
 from django.views.decorators.http import require_POST
 from .forms import CustomAuthenticationForm
 from .models import Speaker, Conference
-from .utils import broadcast_conference_update, is_client, is_operator
+from .utils import (
+    broadcast_conference_update,
+    broadcast_timer_tick,
+    is_client,
+    is_operator,
+)
 
 
 @login_required
@@ -146,21 +151,25 @@ def update_time(request, speaker_id):
         if extra_time:
             extra = int(extra_time)
             speaker.time_limit += timedelta(seconds=extra)
+            speaker.save()
+            broadcast_conference_update()
 
         elif action == "tick":
             speaker.time_limit = max(
                 speaker.time_limit - timedelta(seconds=1), timedelta(seconds=0)
             )
+            speaker.save()
+            broadcast_timer_tick()
 
         elif action == "start":
             conference.is_running = True
+            conference.save()
+            broadcast_conference_update()
+
         elif action == "stop":
             conference.is_running = False
-
-        speaker.save()
-        conference.save()
-
-        broadcast_conference_update()
+            conference.save()
+            broadcast_conference_update()
 
         return JsonResponse(
             {"time_limit": speaker.time_limit, "is_running": conference.is_running}
