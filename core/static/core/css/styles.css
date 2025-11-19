@@ -42,6 +42,18 @@ img #logo {
     justify-self: center;
 }
 
+#speaker #speaker-topic {
+    font-size: 96pt;
+}
+
+#speaker #speaker-name {
+    font-size: 80pt;
+}
+
+#speaker #speaker-time {
+    font-size: 156pt;
+}
+
 .icon-wrapper {
     height: 24px;
     cursor: pointer;
@@ -53,15 +65,22 @@ img #logo {
 }
 
 .bg-screen {
-    background-image: url("../img/background.jpg");
+    background:
+        radial-gradient(circle at center,
+            rgba(0, 0, 0, 0) 50%,
+            rgba(0, 0, 0, 0.7) 100%),
+        url("../img/background.jpg");
     background-size: cover;
-    background-position: center center;
+    background-position: center;
     background-repeat: no-repeat;
     background-attachment: fixed;
 }
 
+
 @keyframes blink {
-    50% { opacity: 0; }
+    50% {
+        opacity: 0;
+    }
 }
 
 .blink {
