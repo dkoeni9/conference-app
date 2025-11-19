@@ -59,9 +59,6 @@ class Speaker(models.Model):
         if update_fields is None or "full_name" in update_fields:
             if getattr(self, "full_name", None):
                 self.full_name = self._normalize_text(self.full_name)
-        if update_fields is None or "topic" in update_fields:
-            if getattr(self, "topic", None):
-                self.topic = self._normalize_text(self.topic)
 
         if self.time_limit.total_seconds() < 0:
             self.time_limit = timedelta(seconds=0)
