@@ -10,10 +10,9 @@ document.addEventListener('keydown', (e) => {
 
 document.addEventListener("fullscreenchange", () => {
     const header = document.querySelector("header");
-    const alert = document.querySelector(".alert");
+    const alert = document.querySelector(".alert-container");
 
     if (!header) return;
-    if (!alert) return;
 
     if (document.fullscreenElement) {
         header.style.display = "none";
