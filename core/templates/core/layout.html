@@ -14,9 +14,9 @@
             var csrftoken = '{{ csrf_token }}';
         </script>
     </head>
-    <body class="d-flex flex-column {% if request.resolver_match.url_name == 'login' %}bg-body-tertiary{% elif request.resolver_match.url_name == 'client_screen' %}bg-screen{% else %}bg-body{% endif %}">
+    <body class="d-flex flex-column {% if request.resolver_match.url_name in 'login setup' %}bg-body-tertiary{% elif request.resolver_match.url_name == 'client_screen' %}bg-screen{% else %}bg-body{% endif %}">
 
-        {% if request.resolver_match.url_name != 'login' %}
+        {% if request.resolver_match.url_name not in 'login setup' %}
         <header class="w-100">
             <nav class="navbar navbar-expand-lg bg-primary">
                 <div class="container">

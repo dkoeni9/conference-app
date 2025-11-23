@@ -16,7 +16,7 @@ class CustomAuthenticationForm(AuthenticationForm):
     password = forms.CharField(
         widget=forms.PasswordInput(
             attrs={
-                "class": "form-control mb-2",
+                "class": "form-control",
                 "placeholder": "Пароль",
             }
         )
@@ -50,15 +50,50 @@ class SpeakerForm(forms.ModelForm):
         }
 
 
-class ExtraTimeForm(forms.Form):
-    extra_time = forms.IntegerField(
-        label="Доп. время (сек)",
-        min_value=0,
-        required=False,
-        widget=forms.NumberInput(
+class SetupForm(forms.Form):
+    operator_password = forms.CharField(
+        widget=forms.PasswordInput(
             attrs={
                 "class": "form-control mb-2",
-                "placeholder": "Доп. время (сек)",
+                "placeholder": "Пароль",
             }
-        ),
+        )
     )
+    operator_password_confirm = forms.CharField(
+        widget=forms.PasswordInput(
+            attrs={
+                "class": "form-control",
+                "placeholder": "Подтверждение пароля",
+            }
+        )
+    )
+
+    screen_password = forms.CharField(
+        widget=forms.PasswordInput(
+            attrs={
+                "class": "form-control mb-2",
+                "placeholder": "Пароль",
+            }
+        )
+    )
+    screen_password_confirm = forms.CharField(
+        widget=forms.PasswordInput(
+            attrs={
+                "class": "form-control",
+                "placeholder": "Подтверждение пароля",
+            }
+        )
+    )
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        operator_password = cleaned_data.get("operator_password")
+        operator_password_confirm = cleaned_data.get("operator_password_confirm")
+        if operator_password != operator_password_confirm:
+            self.add_error("operator_password_confirm", "Пароли не совпадают")
+
+        screen_password = cleaned_data.get("screen_password")
+        screen_password_confirm = cleaned_data.get("screen_password_confirm")
+        if screen_password != screen_password_confirm:
+            self.add_error("screen_password_confirm", "Пароли не совпадают")

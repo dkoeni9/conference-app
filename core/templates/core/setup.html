@@ -1,0 +1,52 @@
+{% extends "core/layout.html" %}
+{% load static %}
+
+{% block title %}Первичная настройка{% endblock %}
+
+{% block main %}
+<div class="d-flex justify-content-center align-items-center h-100">
+    <div class="col-12 col-sm-10 col-md-8 col-lg-6">
+        {% if form.non_field_errors %}
+        <div class="alert alert-danger mb-3">
+            {% for error in form.non_field_errors %}
+            <p class="m-0">{{ error }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+
+
+        <form class="p-3 border rounded bg-light-subtle" method="post">
+            {% csrf_token %}
+
+            <div class="logo-wrapper d-flex justify-content-center align-items-center overflow-hidden">
+                <img class="mb-4 img-fluid object-fit-cover" src=" {% static 'core/img/logo-square.png' %}" alt="Logo" width="128" height="128">
+            </div>
+
+            <div class="row row-cols-1 row-cols-md-2">
+                <fieldset class="col mb-3 mb-md-0">
+                    <legend class="h1 text-center">Оператор</legend>
+                    {{ form.operator_password }}
+                    {{ form.operator_password_confirm }}
+
+                    {% for error in form.operator_password_confirm.errors %}
+                    <div class="text-danger small">{{ error }}</div>
+                    {% endfor %}
+                </fieldset>
+
+                <fieldset class="col">
+                    <legend class="h1 text-center">Экран</legend>
+                    {{ form.screen_password }}
+                    {{ form.screen_password_confirm }}
+
+                    {% for error in form.screen_password_confirm.errors %}
+                    <div class="text-danger small">{{ error }}</div>
+                    {% endfor %}
+                </fieldset>
+            </div>
+
+            <button class="btn btn-primary w-100 mt-3">Установить пароли</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

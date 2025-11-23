@@ -5,7 +5,7 @@ from core.models import Speaker, Conference
 
 
 class Command(BaseCommand):
-    help = "Creates operator and client groups"
+    help = "Creates operator and screen groups"
 
     def handle(self, *args, **options):
         speaker_ct = ContentType.objects.get_for_model(Speaker)
@@ -41,9 +41,9 @@ class Command(BaseCommand):
             )
         )
 
-        client_group, created = Group.objects.get_or_create(name="client")
+        screen_group, created = Group.objects.get_or_create(name="screen")
 
-        client_permissions = [
+        screen_permissions = [
             # Speaker permissions
             Permission.objects.get(codename="view_speaker", content_type=speaker_ct),
             # Conference permissions
@@ -52,10 +52,10 @@ class Command(BaseCommand):
             ),
         ]
 
-        client_group.permissions.set(client_permissions)
+        screen_group.permissions.set(screen_permissions)
         self.stdout.write(
             self.style.SUCCESS(
-                f'Группа "client" {"создана" if created else "обновлена"}'
+                f'Группа "screen" {"создана" if created else "обновлена"}'
             )
         )
 

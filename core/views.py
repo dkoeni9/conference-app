@@ -1,11 +1,13 @@
 from datetime import timedelta
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.models import User, Group
+from django.core.management import call_command
 from django.http import HttpResponse, JsonResponse
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.views.decorators.http import require_POST
-from .forms import CustomAuthenticationForm
+from .forms import CustomAuthenticationForm, SetupForm
 from .models import Speaker, Conference
 from .utils import (
     broadcast_conference_update,
@@ -213,3 +215,33 @@ class CustomLoginView(auth_views.LoginView):
 
 def access_denied(request):
     return render(request, "core/access-denied.html", status=403)
+
+
+def setup(request):
+    if User.objects.exclude(is_superuser=True).exists():
+        return redirect(reverse("dashboard"))
+
+    if request.method == "POST":
+        form = SetupForm(request.POST)
+
+        if form.is_valid():
+            operator_password = form.cleaned_data["operator_password"]
+            screen_password = form.cleaned_data["screen_password"]
+
+            operator = User.objects.create_user(
+                username="operator", password=operator_password
+            )
+            screen = User.objects.create_user(
+                username="screen", password=screen_password
+            )
+
+            call_command("create_groups")
+
+            operator.groups.add(Group.objects.get(name="operator"))
+            screen.groups.add(Group.objects.get(name="screen"))
+
+            return redirect(reverse("login"))
+    else:
+        form = SetupForm()
+
+    return render(request, "core/setup.html", {"form": form})

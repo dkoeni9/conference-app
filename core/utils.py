@@ -30,7 +30,7 @@ def broadcast_timer_tick():
 
 
 def is_client(user):
-    return user.groups.filter(name="client").exists()
+    return user.groups.filter(name="screen").exists()
 
 
 def is_operator(user):
