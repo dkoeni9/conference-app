@@ -13,9 +13,9 @@
     </div>
 </div> -->
 
-<div class=" row d-flex justify-content-center align-items-center h-100">
+<div class="d-flex justify-content-center align-items-center h-100">
 
-    <section id="speaker" class="row d-flex flex-column justify-content-center align-items-center h-100 text-center text-light {% if current_speaker %}d-block{% else %}d-none{% endif %}">
+    <section id="speaker" class="d-flex flex-column justify-content-center align-items-center gap-5 h-100 text-center text-light {% if current_speaker %}d-block{% else %}d-none{% endif %}">
         <h1 id="speaker-topic" class="fw-semibold ">&laquo;{{ current_speaker.topic }}&raquo;</h1>
         <p id="speaker-name" class="">{{ current_speaker.full_name }}</p>
         <p id="speaker-time" class="fw-bold">{{ current_speaker.time_limit_formatted}}</p>
