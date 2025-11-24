@@ -56,12 +56,14 @@
             </button>
 
             {% for speaker in speakers %}
-            <button type="button" class="speaker-item list-group-item list-group-item-action {% if speaker.id == current_speaker.id %}active{% endif %}" data-id="{{ speaker.id }}" data-name="{{ speaker.full_name }}" data-time-limit="{{ speaker.time_limit_seconds }}">
-                <span class="speaker-name fw-semibold">{{ speaker.short_name }}</span>
-                <span class="speaker-topic text-truncate">&laquo;{{ speaker.topic }}&raquo;</span>
-                <span class="speaker-time badge {% if speaker.time_limit_seconds < 11 %}text-bg-danger{% else %}text-bg-primary{% endif %}">{{ speaker.time_limit_formatted|default:"00:00" }}</span>
+            <button type="button" class="d-flex justify-content-between align-items-start speaker-item list-group-item list-group-item-action {% if speaker.id == current_speaker.id %}active{% endif %}" data-id="{{ speaker.id }}" data-name="{{ speaker.full_name }}" data-time-limit="{{ speaker.time_limit_seconds }}">
+                <div class="ms-2 me-auto">
+                    <span class="speaker-name fw-semibold d-block">{{ speaker.short_name }}</span>
+                    <span class="speaker-topic d-block text-wrap">&laquo;{{ speaker.topic }}&raquo;</span>
+                </div>
+                <span class="speaker-time badge {% if speaker.time_limit_seconds < 11 %}text-bg-danger{% else %}text-bg-primary{% endif %} align-self-center">{{ speaker.time_limit_formatted|default:"00:00" }}</span>
 
-                <span class="icon-wrapper delete-speaker text-dark">
+                <span class="icon-wrapper delete-speaker text-dark ms-4 align-self-center">
                     <!-- <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" stroke="currentColor" stroke-width=".2" viewBox="0 0 16 16"> -->
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
                         <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708" />
@@ -77,3 +79,5 @@
 {% block scripts %}
 <script type="module" src="{% static 'core/dashboard.js' %}"></script>
 {% endblock %}
+
+Lorem ipsum dolor sit amet consectetur adipisicing elit. Minus, aperiam!

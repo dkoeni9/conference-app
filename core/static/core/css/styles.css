@@ -26,21 +26,6 @@ img #logo {
     content: none;
 }
 
-.speaker-item {
-    display: grid;
-    grid-template-columns: 24px 2fr 3fr 80px 24px;
-    /* номер, имя, тема, время, иконка */
-    align-items: center;
-    gap: 8px;
-}
-
-.speaker-topic {
-    display: inline-block;
-}
-
-.speaker-time {
-    justify-self: center;
-}
 
 #speaker #speaker-topic {
     font-size: 96pt;
@@ -54,6 +39,7 @@ img #logo {
     font-size: 156pt;
 }
 
+
 .icon-wrapper {
     height: 24px;
     cursor: pointer;
@@ -63,6 +49,7 @@ img #logo {
     display: block;
     margin: 0 auto;
 }
+
 
 .bg-screen {
     background:

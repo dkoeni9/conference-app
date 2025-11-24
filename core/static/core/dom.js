@@ -5,7 +5,7 @@ export function createSpeakerButton(speaker) {
     const button = document.createElement("button");
 
     button.type = "button";
-    button.className = "speaker-item list-group-item list-group-item-action";
+    button.className = "d-flex justify-content-between align-items-start speaker-item list-group-item list-group-item-action";
     button.dataset.id = speaker.id;
     button.dataset.name = speaker.full_name;
     button.dataset.timeLimit = speaker.time_limit_seconds;
@@ -13,10 +13,13 @@ export function createSpeakerButton(speaker) {
     const shortName = speaker.short_name ? speaker.short_name : speaker.full_name;
 
     button.innerHTML = `
-    <span class="speaker-name fw-semibold">${shortName}</span>
-    <span class="speaker-topic text-truncate ">&laquo;${speaker.topic}&raquo;</span>
-    <span class="speaker-time badge text-bg-primary">${formatTime(speaker.time_limit_seconds)}</span>
-    <span class="icon-wrapper delete-speaker text-dark">
+    <div class="ms-2 me-auto">
+        <span class="speaker-name fw-semibold d-block">${shortName}</span>
+        <span class="speaker-topic d-block text-wrap">&laquo;${speaker.topic}&raquo;</span>
+    </div>
+    <span class="speaker-time badge text-bg-primary align-self-center">${formatTime(speaker.time_limit_seconds)}</span>
+    
+    <span class="icon-wrapper delete-speaker text-dark ms-4 align-self-center">
         <!-- <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" stroke="currentColor" stroke-width=".2" viewBox="0 0 16 16"> -->
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
             <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708" />
