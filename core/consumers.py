@@ -68,7 +68,7 @@ class ConferenceConsumer(AsyncWebsocketConsumer):
 
             return {
                 "type": "full_update",
-                "current_speaker": speaker.full_name,
+                "current_speaker": speaker.formatted_name,
                 "topic": getattr(speaker, "topic", ""),
                 "time_limit": int(time_limit.total_seconds()),
                 "is_running": conference.is_running,

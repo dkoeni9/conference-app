@@ -30,6 +30,15 @@ class Speaker(models.Model):
         return f"-{formatted}" if is_negative else formatted
 
     @property
+    def formatted_name(self):
+        parts = [
+            part.strip().capitalize() for part in self.full_name.split() if part.strip()
+        ]
+        parts[0] = parts[0].upper()
+
+        return " ".join(parts)
+
+    @property
     def short_name(self):
         parts = [part for part in self.full_name.split() if part.strip()]
         if not parts:
