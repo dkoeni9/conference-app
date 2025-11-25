@@ -11,7 +11,9 @@ document.addEventListener('keydown', (e) => {
 document.addEventListener("fullscreenchange", () => {
     const header = document.querySelector("header");
 
-    if (!header) return;
+    if (header) {
+        header.classList.toggle("d-none", document.fullscreenElement);
+    };
 
-    header.classList.toggle("d-none", document.fullscreenElement);
+    document.body.classList.toggle("hide-cursor", document.fullscreenElement);
 });

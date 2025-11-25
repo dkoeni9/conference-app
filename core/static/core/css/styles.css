@@ -66,6 +66,11 @@ body {
 }
 
 
+.hide-cursor {
+    cursor: none !important;
+}
+
+
 .bg-screen {
     background:
         radial-gradient(circle at center,
