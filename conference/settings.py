@@ -10,25 +10,55 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+import json
 from pathlib import Path
 import os
+import socket
+
+
+def get_local_ip():
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    try:
+        s.connect(("8.8.8.8", 80))
+        ip = s.getsockname()[0]
+    finally:
+        s.close()
+    return ip
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+with open(BASE_DIR / "config.json") as file:
+    config = json.load(file)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
+SECURE_CROSS_ORIGIN_OPENER_POLICY = None
+
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-fg8g0axa=$t=jqqf6n*2sazxz=3i)gf56f=s=a+txyf6fc=g0o"
+SECRET_KEY = config.get(
+    "SECRET_KEY", "django-insecure-fg8g0axa=$t=jqqf6n*2sazxz=3i)gf56f=s=a+txyf6fc=g0o"
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config.get("DEBUG", True)
 
-HOST_IP = os.environ.get("HOST_IP", "127.0.0.1")
-ALLOWED_HOSTS = ["localhost", "127.0.0.1", HOST_IP]
+if DEBUG:
+    ALLOWED_HOSTS = ["*"]
+else:
+    ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
 
+    host_ip = get_local_ip()
+    host_name = config.get("HOST_NAME")
+
+    if host_ip:
+        os.environ["HOST_IP"] = host_ip
+        ALLOWED_HOSTS.append(host_ip)
+
+    if host_name:
+        ALLOWED_HOSTS.append(host_name)
 
 # Application definition
 
@@ -122,6 +152,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = "/static/"
+
+STATIC_ROOT = BASE_DIR / "static"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field

@@ -69,7 +69,7 @@ function connectWebSocket() {
 
         if (data.type === "pong") return;
 
-        console.debug("📨 WS message:", data);
+        // console.debug("📨 WS message:", data);
 
         // Handle timer update
         if (data.type === "timer_update") {

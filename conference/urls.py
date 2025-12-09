@@ -23,5 +23,4 @@ from django.views.generic import RedirectView
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", include("core.urls")),
-    re_path(r"^.*$", RedirectView.as_view(url="/", permanent=False)),
 ]
