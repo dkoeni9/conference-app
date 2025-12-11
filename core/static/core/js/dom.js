@@ -15,7 +15,7 @@ export function createSpeakerButton(speaker) {
     button.innerHTML = `
     <div class="ms-2 me-auto">
         <span class="speaker-name fw-semibold d-block">${shortName}</span>
-        <span class="speaker-topic d-block text-wrap">&laquo;${speaker.topic}&raquo;</span>
+        <span class="speaker-topic d-block text-wrap">${speaker.topic}</span>
     </div>
     <span class="speaker-time badge text-bg-primary align-self-center">${formatTime(speaker.time_limit_seconds)}</span>
     
