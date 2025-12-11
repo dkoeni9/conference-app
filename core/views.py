@@ -7,7 +7,7 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.views.decorators.http import require_POST
-from .forms import CustomAuthenticationForm, SetupForm
+from .forms import CustomAuthenticationForm, SetupForm, SpeakerForm
 from .models import Speaker, Conference
 from .utils import (
     broadcast_conference_update,
@@ -39,18 +39,12 @@ def dashboard(request):
 @user_passes_test(is_operator)
 @require_POST
 def add_speaker(request):
-    name = request.POST.get("full_name")
-    topic = request.POST.get("topic")
-    seconds = int(request.POST.get("time_limit_seconds", 0))
+    form = SpeakerForm(request.POST)
 
-    if not name or not topic:
-        return JsonResponse({"error": "Все поля обязательны"}, status=400)
+    if not form.is_valid():
+        return JsonResponse({"errors": "Некорректное значение"}, status=400)
 
-    speaker = Speaker.objects.create(
-        full_name=name,
-        topic=topic,
-        time_limit=timedelta(seconds=seconds),
-    )
+    speaker = form.save()
 
     return JsonResponse(
         {

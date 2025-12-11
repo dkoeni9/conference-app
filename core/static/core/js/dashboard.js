@@ -208,7 +208,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         try {
             const data = await api.addSpeaker(
-                `full_name=${encodeURIComponent(name)}&topic=${encodeURIComponent(topic)}&time_limit_seconds=${time}`
+                `full_name=${encodeURIComponent(name)}&topic=${encodeURIComponent(topic)}&time_limit=${time}`
             );
 
 

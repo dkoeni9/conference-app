@@ -1,3 +1,4 @@
+from datetime import timedelta
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 from .models import Speaker
@@ -40,12 +41,12 @@ class SpeakerForm(forms.ModelForm):
                     "placeholder": "Тема выступления",
                 }
             ),
-            "time_limit": forms.TimeInput(
+            "time_limit": forms.NumberInput(
                 attrs={
                     "class": "form-control mb-2",
                     "placeholder": "Время (ЧЧ:ММ:СС)",
-                    "type": "time",
-                }
+                    "min": 0,
+                },
             ),
         }
 
