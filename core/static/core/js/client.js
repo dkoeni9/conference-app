@@ -148,7 +148,7 @@ function handleFullUpdate(data) {
         speakerName.textContent = data.current_speaker || "-";
     }
     if (speakerTopic) {
-        speakerTopic.textContent = `«${data.topic}»` || "-";
+        speakerTopic.textContent = data.topic || "-";
     }
 
     const isRunning = !!data.is_running;

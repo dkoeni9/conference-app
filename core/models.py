@@ -8,7 +8,9 @@ logger = logging.getLogger(__name__)
 
 class Speaker(models.Model):
     full_name = models.CharField(max_length=200, verbose_name="ФИО докладчика")
-    topic = models.CharField(max_length=300, verbose_name="Тема выступления")
+    topic = models.CharField(
+        max_length=300, verbose_name="Тема выступления", blank=True
+    )
     time_limit = models.DurationField(
         default=timedelta(seconds=300), verbose_name="Время (ЧЧ:ММ:СС)"
     )
@@ -34,7 +36,6 @@ class Speaker(models.Model):
         parts = [
             part.strip().capitalize() for part in self.full_name.split() if part.strip()
         ]
-        parts[0] = parts[0].upper()
 
         return " ".join(parts)
 
