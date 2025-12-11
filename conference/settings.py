@@ -29,8 +29,13 @@ def get_local_ip():
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-with open(BASE_DIR / "config.json") as file:
-    config = json.load(file)
+config_path = BASE_DIR / "config.json"
+
+try:
+    with open(config_path) as file:
+        config = json.load(file)
+except FileNotFoundError:
+    config = {}
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/

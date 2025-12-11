@@ -8,9 +8,6 @@ def main():
     """Run administrative tasks."""
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "conference.settings")
 
-    if os.environ.get("RUN_MAIN") == "true":
-        print(f"Local network access: http://{os.environ["HOST_IP"]}:8000")
-
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:
