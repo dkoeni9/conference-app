@@ -148,7 +148,14 @@ function handleFullUpdate(data) {
         speakerName.textContent = data.current_speaker || "-";
     }
     if (speakerTopic) {
-        speakerTopic.textContent = data.topic || "-";
+        const topicText = (data.topic || "").trim();
+        speakerTopic.textContent = topicText;
+
+        if (!topicText) {
+            // If topic is empty, keep it hidden and don't let other logic show it
+            speakerTopic.classList.add("d-none");
+            appliedShowTopic = false;
+        }
     }
 
     const isRunning = !!data.is_running;
@@ -179,8 +186,14 @@ function handleFullUpdate(data) {
         }
 
         if (speakerTopic) {
-            speakerTopic.classList.toggle("d-none", !pendingShowTopic);
-            appliedShowTopic = pendingShowTopic;
+            // If there's no topic text, keep hidden; otherwise follow pendingShowTopic
+            if (!speakerTopic.textContent.trim()) {
+                speakerTopic.classList.add("d-none");
+                appliedShowTopic = false;
+            } else {
+                speakerTopic.classList.toggle("d-none", !pendingShowTopic);
+                appliedShowTopic = pendingShowTopic;
+            }
         }
     } else {
         // Show name & topic when timer is not running
@@ -194,8 +207,14 @@ function handleFullUpdate(data) {
             appliedShowName = true;
         }
         if (speakerTopic) {
-            speakerTopic.classList.remove("d-none");
-            appliedShowTopic = true;
+            // Only show topic when it actually has content
+            if (speakerTopic.textContent.trim()) {
+                speakerTopic.classList.remove("d-none");
+                appliedShowTopic = true;
+            } else {
+                speakerTopic.classList.add("d-none");
+                appliedShowTopic = false;
+            }
         }
     }
 }
