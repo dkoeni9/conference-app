@@ -21,8 +21,6 @@ const speakerName = document.getElementById("speaker-name");
 const speakerTopic = document.getElementById("speaker-topic");
 const speakerTime = document.getElementById("speaker-time");
 
-const beepSound = document.getElementById("beep-sound");
-let hasPlayedBeep = false;
 
 const scheme = window.location.protocol === "https:" ? "wss" : "ws";
 const host = window.location.hostname || "127.0.0.1";
@@ -108,17 +106,6 @@ function handleTimerUpdate(data) {
         speakerTime.classList.toggle("text-danger", displaySeconds <= 10);
         speakerTime.classList.toggle("blink", displaySeconds === 0);
     }
-
-    // Handle beep sound
-    if (displaySeconds === 0 && !hasPlayedBeep) {
-        hasPlayedBeep = true;
-        if (beepSound) {
-            beepSound.currentTime = 0;
-            beepSound.play().catch(err => console.warn("Beep play error:", err));
-        }
-    } else if (displaySeconds > 0) {
-        hasPlayedBeep = false;
-    }
 }
 
 function handleFullUpdate(data) {
@@ -168,16 +155,6 @@ function handleFullUpdate(data) {
 
             speakerTime.classList.toggle("text-danger", displaySeconds <= 10);
             speakerTime.classList.toggle("blink", displaySeconds === 0);
-        }
-
-        if (displaySeconds === 0 && !hasPlayedBeep) {
-            hasPlayedBeep = true;
-            if (beepSound) {
-                beepSound.currentTime = 0;
-                beepSound.play().catch(err => console.warn("Beep play error:", err));
-            }
-        } else if (displaySeconds > 0) {
-            hasPlayedBeep = false;
         }
 
         if (speakerName) {

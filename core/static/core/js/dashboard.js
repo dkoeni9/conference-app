@@ -17,6 +17,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const toggleConferenceBtn = document.querySelector("#toggle-conference-button");
     const resetTimeBtn = document.getElementById("reset-time-button");
 
+    const beepSound = document.getElementById("beep-sound");
+    let hasPlayedBeep = false;
+
     state.speakerId = activeBtn?.dataset.id || null;
     state.timeLimit = parseInt(activeBtn?.dataset.timeLimit || "0", 10);
     state.conferenceRunning = false;
@@ -126,6 +129,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         state.speakerId = btn.dataset.id || "";
         state.timeLimit = parseInt(btn.dataset.timeLimit || "0", 10);
+        hasPlayedBeep = false;
 
         // Update delete icon styles when active speaker changes
         updateSpeakerItemStyles();
@@ -142,6 +146,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!extraTime) return;
 
         state.timeLimit = Math.max(0, state.timeLimit + extraTime);
+        hasPlayedBeep = false;
 
         const timeSpan = speakerList.querySelector(".list-group-item.active .speaker-time");
         if (timeSpan) {
@@ -171,8 +176,20 @@ document.addEventListener("DOMContentLoaded", function () {
         await api.updateTime(state.speakerId, `action=${state.conferenceRunning ? "start" : "stop"}`);
 
         if (state.conferenceRunning) {
+            hasPlayedBeep = false;
+
             state.timerInterval = setInterval(async () => {
                 state.timeLimit = Math.max(0, state.timeLimit - 1);
+
+                if (state.timeLimit === 0 && !hasPlayedBeep) {
+                    hasPlayedBeep = true;
+                    if (beepSound) {
+                        beepSound.currentTime = 0;
+                        beepSound.play().catch(err => console.warn("Beep play error:", err));
+                    }
+                } else if (state.timeLimit > 0) {
+                    hasPlayedBeep = false;
+                }
 
                 const timeSpan = speakerList.querySelector(".list-group-item.active .speaker-time");
                 if (timeSpan) {
