@@ -16,6 +16,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const toggleConferenceBtn = document.querySelector("#toggle-conference-button");
     const resetTimeBtn = document.getElementById("reset-time-button");
+    const restartTimeBtn = document.getElementById("restart-time-button");
 
     const beepSound = document.getElementById("beep-sound");
     let hasPlayedBeep = false;
@@ -285,5 +286,34 @@ document.addEventListener("DOMContentLoaded", function () {
         extraTimeInput.value = -currentTime;
 
         timeControlForm.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }));
+    });
+
+
+    // Restore to initial value (value entered at creation)
+    restartTimeBtn?.addEventListener("click", async () => {
+        const activeBtn = document.querySelector("#speaker-list .list-group-item.active");
+        if (!activeBtn || !state.speakerId) return;
+
+        const initialTime = parseInt(activeBtn.dataset.initialTimeLimit || "0", 10);
+        const currentTime = parseInt(activeBtn.dataset.timeLimit || "0", 10);
+
+        if (initialTime === 0 || initialTime === currentTime) return;
+
+        const extraTime = initialTime - currentTime;
+
+        // apply locally first
+        state.timeLimit = initialTime;
+        hasPlayedBeep = false;
+        const timeSpan = speakerList.querySelector(".list-group-item.active .speaker-time");
+        if (timeSpan) renderTimeInSpan(timeSpan, state.timeLimit);
+        // persist in dataset
+        saveCurrentTimeToDataset(state.speakerId);
+        activeBtn.dataset.timeLimit = String(state.timeLimit);
+
+        try {
+            await api.updateTime(state.speakerId, `extra_time=${extraTime}`);
+        } catch (error) {
+            console.error("Ошибка при сбросе времени:", error);
+        }
     });
 });

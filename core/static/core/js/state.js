@@ -1,7 +1,8 @@
 export const state = {
+    conferenceRunning: false,
     speakerId: null,
     timeLimit: 0,
-    conferenceRunning: false,
+    originalTime: 0,
     timerInterval: null
 };
 

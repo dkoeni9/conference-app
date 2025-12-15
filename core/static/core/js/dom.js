@@ -9,6 +9,7 @@ export function createSpeakerButton(speaker) {
     button.dataset.id = speaker.id;
     button.dataset.name = speaker.full_name;
     button.dataset.timeLimit = speaker.time_limit_seconds;
+    button.dataset.initialTimeLimit = speaker.initial_time_limit_seconds ?? speaker.time_limit_seconds;
 
     const shortName = speaker.short_name ? speaker.short_name : speaker.full_name;
 

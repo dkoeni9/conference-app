@@ -14,11 +14,19 @@ class Speaker(models.Model):
     time_limit = models.DurationField(
         default=timedelta(seconds=300), verbose_name="Время (ЧЧ:ММ:СС)"
     )
+    initial_time_limit = models.DurationField(
+        default=timedelta(seconds=300), verbose_name="Изначальное время (ЧЧ:ММ:СС)"
+    )
 
     @property
     def time_limit_seconds(self):
         """Возвращает время в секундах"""
         return int(self.time_limit.total_seconds())
+
+    @property
+    def initial_time_limit_seconds(self):
+        """Возвращает время в секундах"""
+        return int(self.initial_time_limit.total_seconds())
 
     @property
     def time_limit_formatted(self):
@@ -72,6 +80,9 @@ class Speaker(models.Model):
 
         if self.time_limit.total_seconds() < 0:
             self.time_limit = timedelta(seconds=0)
+
+        if getattr(self, "_state", None) and getattr(self._state, "adding", False):
+            self.initial_time_limit = self.time_limit
 
         super().save(
             *args,
