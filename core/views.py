@@ -19,6 +19,15 @@ from .utils import (
 
 @login_required
 @user_passes_test(is_operator)
+def landing(request):
+    return render(
+        request,
+        "core/landing.html",
+    )
+
+
+@login_required
+@user_passes_test(is_operator)
 def dashboard(request):
     speakers = Speaker.objects.all()
     conference, _ = Conference.objects.get_or_create()

@@ -1,0 +1,15 @@
+{% extends "core/layout.html" %}
+{% load static %}
+
+{% block title %}Выбор экрана{% endblock %}
+
+{% block main %}
+<div class="d-flex justify-content-center align-items-center h-100">
+    <div class="col-12 col-sm-8 col-md-6 col-lg-4">
+
+        <a href="{% url 'dashboard' %}">Панель управления</a>
+        <a href="{% url 'presentation' %}">Экран презентации</a>
+
+    </div>
+</div>
+{% endblock %}
