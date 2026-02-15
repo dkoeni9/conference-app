@@ -116,7 +116,7 @@ def set_speaker(request, speaker_id=None):
 @user_passes_test(is_operator)
 @require_POST
 def set_visibility(request):
-    """Operator: toggle visibility flags and broadcast to clients"""
+    """Operator: toggle visibility flags and broadcast to presentation screens"""
 
     conference, _ = Conference.objects.get_or_create()
 
@@ -180,14 +180,14 @@ def update_time(request, speaker_id):
 
 @login_required
 @user_passes_test(is_client)
-def client_screen(request):
+def presentation(request):
     conference, _ = Conference.objects.get_or_create()
     show_time_only = not conference.show_name and not conference.show_topic
     current_speaker = conference.speaker
 
     return render(
         request,
-        "core/client.html",
+        "core/presentation.html",
         {
             "current_speaker": current_speaker,
             "show_time_only": show_time_only,
@@ -207,7 +207,7 @@ class CustomLoginView(auth_views.LoginView):
         if is_operator(user):
             return reverse("dashboard")
         elif is_client(user):
-            return reverse("client_screen")
+            return reverse("presentation")
         else:
             return reverse("access_denied")
 

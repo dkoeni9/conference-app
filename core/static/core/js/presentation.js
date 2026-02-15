@@ -1,9 +1,9 @@
 import { formatTime } from "./shared.js";
 import { formatSpeakerName } from "./dom.js";
 
-const CLEAR_CLIENT_STORAGE_ON_LOAD = true;
+const CLEAR_STORAGE_ON_LOAD = true;
 
-if (CLEAR_CLIENT_STORAGE_ON_LOAD) {
+if (CLEAR_STORAGE_ON_LOAD) {
     try {
         localStorage.clear();
     } catch (e) {
