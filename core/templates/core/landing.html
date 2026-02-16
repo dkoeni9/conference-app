@@ -5,11 +5,10 @@
 
 {% block main %}
 <div class="d-flex justify-content-center align-items-center h-100">
-    <div class="col-12 col-sm-8 col-md-6 col-lg-4">
-
-        <a href="{% url 'dashboard' %}">Панель управления</a>
-        <a href="{% url 'presentation' %}">Экран презентации</a>
-
+    <div class="d-grid gap-2 col-3 mx-auto">
+        <a href="{% url 'dashboard' %}" class="btn btn-primary w-100 h-100">Панель управления</a>
+        <a href="{% url 'presentation' %}" class="btn btn-primary w-100 h-100">Экран презентации</a>
     </div>
 </div>
+
 {% endblock %}

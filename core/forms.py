@@ -8,9 +8,10 @@ class CustomAuthenticationForm(AuthenticationForm):
     username = forms.CharField(
         widget=forms.TextInput(
             attrs={
+                "type": "hidden",
                 "class": "form-control mb-2",
                 "placeholder": "Имя пользователя",
-                "autofocus": True,
+                "value": "operator",
             }
         )
     )
@@ -19,6 +20,7 @@ class CustomAuthenticationForm(AuthenticationForm):
             attrs={
                 "class": "form-control",
                 "placeholder": "Пароль",
+                "autofocus": True,
             }
         )
     )
@@ -69,23 +71,6 @@ class SetupForm(forms.Form):
         )
     )
 
-    screen_password = forms.CharField(
-        widget=forms.PasswordInput(
-            attrs={
-                "class": "form-control mb-2",
-                "placeholder": "Пароль",
-            }
-        )
-    )
-    screen_password_confirm = forms.CharField(
-        widget=forms.PasswordInput(
-            attrs={
-                "class": "form-control",
-                "placeholder": "Подтверждение пароля",
-            }
-        )
-    )
-
     def clean(self):
         cleaned_data = super().clean()
 
@@ -93,8 +78,3 @@ class SetupForm(forms.Form):
         operator_password_confirm = cleaned_data.get("operator_password_confirm")
         if operator_password != operator_password_confirm:
             self.add_error("operator_password_confirm", "Пароли не совпадают")
-
-        screen_password = cleaned_data.get("screen_password")
-        screen_password_confirm = cleaned_data.get("screen_password_confirm")
-        if screen_password != screen_password_confirm:
-            self.add_error("screen_password_confirm", "Пароли не совпадают")

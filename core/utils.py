@@ -27,11 +27,3 @@ def broadcast_timer_tick():
         "conference",
         {"type": "timer.tick"},
     )
-
-
-def is_client(user):
-    return user.groups.filter(name="screen").exists()
-
-
-def is_operator(user):
-    return user.groups.filter(name="operator").exists() or user.is_superuser

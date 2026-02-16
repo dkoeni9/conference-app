@@ -1,8 +1,10 @@
 from datetime import timedelta
 from django.contrib.auth import views as auth_views
-from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User, Group
 from django.core.management import call_command
+from django.db import IntegrityError
+from django.contrib import messages
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
@@ -12,13 +14,10 @@ from .models import Speaker, Conference
 from .utils import (
     broadcast_conference_update,
     broadcast_timer_tick,
-    is_client,
-    is_operator,
 )
 
 
 @login_required
-@user_passes_test(is_operator)
 def landing(request):
     return render(
         request,
@@ -27,7 +26,6 @@ def landing(request):
 
 
 @login_required
-@user_passes_test(is_operator)
 def dashboard(request):
     speakers = Speaker.objects.all()
     conference, _ = Conference.objects.get_or_create()
@@ -45,7 +43,6 @@ def dashboard(request):
 
 
 @login_required
-@user_passes_test(is_operator)
 @require_POST
 def add_speaker(request):
     form = SpeakerForm(request.POST)
@@ -70,7 +67,6 @@ def add_speaker(request):
 
 
 @login_required
-@user_passes_test(is_operator)
 @require_POST
 def delete_speaker(request, speaker_id):
     speaker = get_object_or_404(Speaker, id=speaker_id)
@@ -82,7 +78,6 @@ def delete_speaker(request, speaker_id):
 
 
 @login_required
-@user_passes_test(is_operator)
 @require_POST
 def set_speaker(request, speaker_id=None):
     """
@@ -122,10 +117,9 @@ def set_speaker(request, speaker_id=None):
 
 
 @login_required
-@user_passes_test(is_operator)
 @require_POST
 def set_visibility(request):
-    """Operator: toggle visibility flags and broadcast to presentation screens"""
+    """Operator: toggle visibility flags and broadcast to presentation screen"""
 
     conference, _ = Conference.objects.get_or_create()
 
@@ -144,7 +138,6 @@ def set_visibility(request):
 
 
 @login_required
-@user_passes_test(is_operator)
 @require_POST
 def update_time(request, speaker_id):
     """
@@ -188,7 +181,6 @@ def update_time(request, speaker_id):
 
 
 @login_required
-@user_passes_test(is_client)
 def presentation(request):
     conference, _ = Conference.objects.get_or_create()
     show_time_only = not conference.show_name and not conference.show_topic
@@ -209,46 +201,37 @@ class CustomLoginView(auth_views.LoginView):
     template_name = "core/login.html"
     form_class = CustomAuthenticationForm
 
-    def get_success_url(self):
-        """Редирект в зависимости от роли"""
-        user = self.request.user
-
-        if is_operator(user):
-            return reverse("dashboard")
-        elif is_client(user):
-            return reverse("presentation")
-        else:
-            return reverse("access_denied")
-
-
-def access_denied(request):
-    return render(request, "core/access-denied.html", status=403)
-
 
 def setup(request):
     if User.objects.exclude(is_superuser=True).exists():
-        return redirect(reverse("dashboard"))
+        return redirect(reverse("landing"))
 
     if request.method == "POST":
         form = SetupForm(request.POST)
 
         if form.is_valid():
+            if User.objects.filter(username="operator").exists():
+                messages.warning(request, "Настройка уже выполнена.")
+                return redirect(reverse("landing"))
+
             operator_password = form.cleaned_data["operator_password"]
-            screen_password = form.cleaned_data["screen_password"]
 
-            operator = User.objects.create_user(
-                username="operator", password=operator_password
-            )
-            screen = User.objects.create_user(
-                username="screen", password=screen_password
-            )
+            try:
+                operator = User.objects.create_user(
+                    username="operator", password=operator_password
+                )
 
-            call_command("create_groups")
+                call_command("create_groups")
 
-            operator.groups.add(Group.objects.get(name="operator"))
-            screen.groups.add(Group.objects.get(name="screen"))
+                operator.groups.add(Group.objects.get(name="operator"))
 
-            return redirect(reverse("login"))
+                messages.success(request, "Настройка успешно завершена!")
+
+            except IntegrityError:
+                messages.error(request, "Пользователь уже существует.")
+
+            return redirect(reverse("landing"))
+
     else:
         form = SetupForm()
 
