@@ -4,11 +4,12 @@
 {% block title %}Выбор экрана{% endblock %}
 
 {% block main %}
-<div class="d-flex justify-content-center align-items-center h-100">
-    <div class="d-grid gap-2 col-3 mx-auto">
-        <a href="{% url 'dashboard' %}" class="btn btn-primary w-100 h-100">Панель управления</a>
-        <a href="{% url 'presentation' %}" class="btn btn-primary w-100 h-100">Экран презентации</a>
+<div class="h-100 d-flex justify-content-center align-items-center">
+    <div class="d-grid gap-3 col-6 mx-auto">
+        <a href="{% url 'dashboard' %}" class="btn btn-primary btn-lg">Панель управления</a>
+        <a href="{% url 'presentation' %}" class="btn btn-primary btn-lg">Экран презентации</a>
     </div>
 </div>
+
 
 {% endblock %}
