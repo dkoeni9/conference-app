@@ -102,7 +102,9 @@ function handleTimerUpdate(data) {
     // Update only timer display
     if (speakerTime) {
         speakerTime.textContent = formatTime(displaySeconds);
-        speakerTime.classList.remove("d-none");
+        if (speakerTime.classList.contains("d-none")) {
+            speakerTime.classList.remove("d-none");
+        }
 
         speakerTime.classList.toggle("text-danger", displaySeconds <= 10);
         speakerTime.classList.toggle("blink", displaySeconds === 0);
