@@ -171,24 +171,31 @@ function handleFullUpdate(data) {
             }
         }
     } else {
-        // Show name & topic when timer is not running
+        // When timer is stopped, keep "only timer" mode working.
+        const isOnlyTimerMode = !pendingShowName && !pendingShowTopic;
+
         if (speakerTime) {
+            if (isOnlyTimerMode) {
+                speakerTime.textContent = formatTime(displaySeconds);
+                speakerTime.classList.remove("d-none");
+                speakerTime.classList.toggle("text-danger", displaySeconds <= 10);
+            } else {
             speakerTime.textContent = "";
             speakerTime.classList.add("d-none");
+            }
         }
 
         if (speakerName) {
-            speakerName.classList.remove("d-none");
-            appliedShowName = true;
+            speakerName.classList.toggle("d-none", !pendingShowName);
+            appliedShowName = pendingShowName;
         }
         if (speakerTopic) {
-            // Only show topic when it actually has content
-            if (speakerTopic.textContent.trim()) {
-                speakerTopic.classList.remove("d-none");
-                appliedShowTopic = true;
-            } else {
+            if (!speakerTopic.textContent.trim()) {
                 speakerTopic.classList.add("d-none");
                 appliedShowTopic = false;
+            } else {
+                speakerTopic.classList.toggle("d-none", !pendingShowTopic);
+                appliedShowTopic = pendingShowTopic;
             }
         }
     }
