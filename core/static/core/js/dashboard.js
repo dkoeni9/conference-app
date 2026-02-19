@@ -20,7 +20,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const beepSound = document.getElementById("beep-sound");
     let hasPlayedBeep = false;
-    let resetTimeout = null;
 
     state.speakerId = activeBtn?.dataset.id || null;
     state.timeLimit = parseInt(activeBtn?.dataset.timeLimit || "0", 10);
@@ -64,10 +63,6 @@ document.addEventListener("DOMContentLoaded", function () {
                         try {
                             state.conferenceRunning = false;
                             clearInterval(state.timerInterval);
-                            if (resetTimeout) {
-                                clearTimeout(resetTimeout);
-                                resetTimeout = null;
-                            }
                             state.timerInterval = null;
 
                             toggleConferenceBtn.textContent = "Запустить";
@@ -115,10 +110,6 @@ document.addEventListener("DOMContentLoaded", function () {
         if ((state.conferenceRunning && prevSpeakerId) && (prevSpeakerId !== newSpeakerId)) {
             state.conferenceRunning = false;
             clearInterval(state.timerInterval);
-            if (resetTimeout) {
-                clearTimeout(resetTimeout);
-                resetTimeout = null;
-            }
             state.timerInterval = null;
 
             saveCurrentTimeToDataset(prevSpeakerId);
@@ -197,12 +188,6 @@ document.addEventListener("DOMContentLoaded", function () {
                         beepSound.currentTime = 0;
                         beepSound.play().catch(err => console.warn("Beep play error:", err));
                     }
-
-                    if (resetTimeout) clearTimeout(resetTimeout);
-                    resetTimeout = setTimeout(() => {
-                        resetTimeout = null;
-                        noSpeakerBtn.click();
-                    }, 1000);
                 } else if (state.timeLimit > 0) {
                     hasPlayedBeep = false;
                 }
@@ -222,10 +207,6 @@ document.addEventListener("DOMContentLoaded", function () {
             }, 1000);
         } else {
             clearInterval(state.timerInterval);
-            if (resetTimeout) {
-                clearTimeout(resetTimeout);
-                resetTimeout = null;
-            }
             saveCurrentTimeToDataset(state.speakerId);
         }
     });

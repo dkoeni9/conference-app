@@ -94,6 +94,7 @@ function handleTimerUpdate(data) {
         if (speakerTime) {
             speakerTime.textContent = "";
             speakerTime.classList.add("d-none");
+            speakerTime.classList.remove("text-danger", "blink");
         }
         return;
     }
@@ -104,6 +105,7 @@ function handleTimerUpdate(data) {
         speakerTime.classList.remove("d-none");
 
         speakerTime.classList.toggle("text-danger", displaySeconds <= 10);
+        speakerTime.classList.toggle("blink", displaySeconds === 0);
     }
 }
 
@@ -153,6 +155,7 @@ function handleFullUpdate(data) {
             speakerTime.classList.remove("d-none");
 
             speakerTime.classList.toggle("text-danger", displaySeconds <= 10);
+            speakerTime.classList.toggle("blink", displaySeconds === 0);
         }
 
         if (speakerName) {
@@ -179,9 +182,11 @@ function handleFullUpdate(data) {
                 speakerTime.textContent = formatTime(displaySeconds);
                 speakerTime.classList.remove("d-none");
                 speakerTime.classList.toggle("text-danger", displaySeconds <= 10);
+                speakerTime.classList.remove("blink");
             } else {
-            speakerTime.textContent = "";
-            speakerTime.classList.add("d-none");
+                speakerTime.textContent = "";
+                speakerTime.classList.add("d-none");
+                speakerTime.classList.remove("text-danger", "blink");
             }
         }
 
