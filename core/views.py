@@ -21,8 +21,8 @@ from .utils import (
 @user_passes_test(is_operator)
 def dashboard(request):
     speakers = Speaker.objects.all()
-    conference = Conference.objects.first()
-    current_speaker = conference.speaker if conference and conference.speaker else None
+    conference, _ = Conference.objects.get_or_create()
+    current_speaker = conference.speaker
 
     return render(
         request,
@@ -142,7 +142,7 @@ def update_time(request, speaker_id):
     AJAX: Обновить time_limit (добавить или уменьшить) и состояние конференции
     """
     speaker = get_object_or_404(Speaker, id=speaker_id)
-    conference = Conference.objects.first()
+    conference, _ = Conference.objects.get_or_create()
     action = request.POST.get("action")
     extra_time = request.POST.get("extra_time")
 
@@ -181,15 +181,17 @@ def update_time(request, speaker_id):
 @login_required
 @user_passes_test(is_client)
 def client_screen(request):
-    conference = Conference.objects.first()
-    current_speaker = conference.speaker if conference and conference.speaker else None
+    conference, _ = Conference.objects.get_or_create()
+    show_time_only = not conference.show_name and not conference.show_topic
+    current_speaker = conference.speaker
 
     return render(
         request,
         "core/client.html",
         {
             "current_speaker": current_speaker,
-            "conference_is_running": conference.is_running if conference else False,
+            "show_time_only": show_time_only,
+            "conference_is_running": conference.is_running,
         },
     )
 

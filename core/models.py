@@ -97,6 +97,7 @@ class Speaker(models.Model):
 
 
 class Conference(models.Model):
+    singleton_enforcer = models.BooleanField(default=True, unique=True, editable=False)
     speaker = models.ForeignKey(
         Speaker, on_delete=models.SET_NULL, null=True, blank=True
     )
