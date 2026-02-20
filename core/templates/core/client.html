@@ -3,6 +3,7 @@
 
 {% block title %}Демонстрация{% endblock %}
 
+{% block main_class %}w-100 flex-grow-1 p-0 m-0{% endblock %}
 {% block main %}
 
 <!-- <div class="row alert-container">
@@ -13,15 +14,16 @@
     </div>
 </div> -->
 
-<div class="d-flex justify-content-center align-items-center h-100">
+<div id="presentation-stage-shell">
+    <div id="presentation-stage">
+        <section id="speaker" class="{% if not current_speaker %}d-none{% endif %} text-light">
+            <h1 id="speaker-topic" class="fw-semibold text-center {% if show_time_only %}d-none{% endif %}">{{ current_speaker.topic }}</h1>
+            <p id="speaker-name" class="text-center {% if show_time_only %}d-none{% endif %}">{{ current_speaker.formatted_name }}</p>
+            <p id="speaker-time" class="fw-bold text-center {% if not conference_is_running and not show_time_only%}d-none{% endif %}">{{ current_speaker.time_limit_formatted}}</p>
+        </section>
 
-    <section id="speaker" class="d-flex flex-column justify-content-center align-items-center gap-5 h-100 text-center text-light {% if current_speaker %}d-block{% else %}d-none{% endif %}">
-        <h1 id="speaker-topic" class="fw-semibold ">{{ current_speaker.topic }}</h1>
-        <p id="speaker-name" class="">{{ current_speaker.formatted_name }}</p>
-        <p id="speaker-time" class="fw-bold {% if not conference_is_running and not show_time_only%}d-none{% endif %}">{{ current_speaker.time_limit_formatted}}</p>
-    </section>
-
-    <img id="logo" class="img-fluid object-fit-contain {% if not current_speaker %}d-block{% else %}d-none{% endif %}" src="{% static 'core/img/logo.png' %}" alt="Logo" width="1647" height="384">
+        <img id="logo" class="img-fluid object-fit-contain {% if not current_speaker %}d-block{% else %}d-none{% endif %}" src="{% static 'core/img/logo.png' %}" alt="Logo" width="1647" height="384">
+    </div>
 </div>
 
 {% endblock %}

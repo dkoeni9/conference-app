@@ -21,6 +21,7 @@ const speaker = document.querySelector("#speaker");
 const speakerName = document.getElementById("speaker-name");
 const speakerTopic = document.getElementById("speaker-topic");
 const speakerTime = document.getElementById("speaker-time");
+const presentationStage = document.getElementById("presentation-stage");
 
 
 const scheme = window.location.protocol === "https:" ? "wss" : "ws";
@@ -35,6 +36,20 @@ let pendingShowName = true;
 let pendingShowTopic = true;
 let appliedShowName = true;
 let appliedShowTopic = true;
+
+const BASE_STAGE_WIDTH = 1920;
+const BASE_STAGE_HEIGHT = 1080;
+
+function updatePresentationStageScale() {
+    if (!presentationStage) return;
+
+    const scale = Math.min(
+        window.innerWidth / BASE_STAGE_WIDTH,
+        window.innerHeight / BASE_STAGE_HEIGHT
+    );
+
+    presentationStage.style.setProperty("--stage-scale", String(scale));
+}
 
 function connectWebSocket() {
     ws = new WebSocket(`${scheme}://${host}${port}/ws/conference/`);
@@ -122,13 +137,11 @@ function handleFullUpdate(data) {
         logo.classList.remove("d-none");
         logo.classList.add("d-block");
 
-        speaker.classList.remove("d-block");
         speaker.classList.add("d-none");
 
         return;
     } else {
         speaker.classList.remove("d-none");
-        speaker.classList.add("d-block");
 
         logo.classList.remove("d-block");
         logo.classList.add("d-none");
@@ -210,6 +223,10 @@ function handleFullUpdate(data) {
 }
 
 connectWebSocket();
+updatePresentationStageScale();
+
+window.addEventListener("resize", updatePresentationStageScale);
+window.addEventListener("fullscreenchange", updatePresentationStageScale);
 
 window.addEventListener("beforeunload", () => {
     clearInterval(pingInterval);

@@ -28,42 +28,94 @@ body {
 }
 
 
-#speaker #speaker-topic {
-    font-size: clamp(2rem, 8vw, 12vh);
-    line-height: 1;
+#presentation-stage-shell {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+
+#presentation-stage {
+    --stage-scale: 1;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 1920px;
+    height: 1080px;
+    transform: translate(-50%, -50%) scale(var(--stage-scale));
+    transform-origin: center center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 32px 64px;
+}
+
+
+#presentation-stage #speaker {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) auto auto minmax(0, 0.7fr) auto minmax(0, 0.5fr);
+    align-items: center;
+}
+
+
+#presentation-stage #speaker-topic {
+    grid-row: 2;
+    font-size: 108px;
+    line-height: 1.05;
     max-width: 100%;
     text-wrap: balance;
+    margin: 0 0 24px 0;
 }
 
 
-#speaker #speaker-name {
-    font-size: clamp(1.5rem, 5vw, 8vh);
-    line-height: 1;
+#presentation-stage #speaker-name {
+    grid-row: 3;
+    font-size: 76px;
+    line-height: 1.05;
+    max-width: 100%;
+    margin: 0;
     text-wrap: balance;
-white-space: pre-line;
+    white-space: pre-line;
 }
 
 
-#speaker #speaker-time {
-    font-size: clamp(3rem, 12vw, 20vh);
+#presentation-stage #speaker-time {
+    grid-row: 5;
+    font-size: 220px;
     line-height: 1;
+    margin: 0;
 }
 
-#speaker-topic.d-none ~ #speaker-name.d-none ~ #speaker-time,
-#speaker-topic.d-none + #speaker-name.d-none + #speaker-time {
-    font-size: clamp(5rem, 25vw, 35vh);
+
+#presentation-stage #speaker-topic.d-none ~ #speaker-name.d-none ~ #speaker-time,
+#presentation-stage #speaker-topic.d-none + #speaker-name.d-none + #speaker-time {
+    grid-row: 1 / -1;
+    align-self: center;
+    font-size: 340px;
 }
 
-#speaker-topic.d-none ~ #speaker-name:not(.d-none) {
-    font-size: clamp(2rem, 8vw, 12vh);
+
+#presentation-stage #speaker-topic.d-none ~ #speaker-name:not(.d-none) {
+    font-size: 116px;
 }
 
-#speaker-topic.d-none ~ #speaker-time:not(.d-none) {
-    font-size: clamp(4rem, 18vw, 28vh);
+
+#presentation-stage #speaker-topic.d-none ~ #speaker-time:not(.d-none),
+#presentation-stage #speaker-name.d-none ~ #speaker-time:not(.d-none) {
+    font-size: 280px;
 }
 
-#speaker-name.d-none ~ #speaker-time:not(.d-none) {
-    font-size: clamp(4rem, 18vw, 28vh);
+#presentation-stage #logo {
+    display: block;
+    width: 1647px;
+    max-width: 100%;
+    max-height: 100%;
+    height: auto;
+    object-fit: contain;
+    object-position: center;
 }
 
 
