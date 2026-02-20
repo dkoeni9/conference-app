@@ -1,6 +1,8 @@
 import { formatTime } from "./shared.js";
 
 
+// Dashboard
+
 export function createSpeakerButton(speaker) {
     const button = document.createElement("button");
 
@@ -55,4 +57,17 @@ export function updateSpeakerItemStyles() {
             timeSpan.classList.toggle("text-bg-primary", !item.classList.contains("active"));
         }
     });
+}
+
+
+// Presentation Screen
+
+export function formatSpeakerName(fullName) {
+    const parts = (fullName || "").trim().split(/\s+/).filter(Boolean);
+    if (!parts.length) return "-";
+    if (parts.length >= 3) {
+        const [firstWord, ...rest] = parts;
+        return `${firstWord}\n${rest.join(" ")}`;
+    }
+    return parts.join(" ");
 }

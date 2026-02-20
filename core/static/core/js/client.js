@@ -1,4 +1,5 @@
 import { formatTime } from "./shared.js";
+import { formatSpeakerName } from "./dom.js";
 
 const CLEAR_CLIENT_STORAGE_ON_LOAD = true;
 
@@ -135,7 +136,7 @@ function handleFullUpdate(data) {
 
     // Update speaker name and topic
     if (speakerName) {
-        speakerName.textContent = data.current_speaker || "-";
+        speakerName.textContent = formatSpeakerName(data.current_speaker);
     }
     if (speakerTopic) {
         const topicText = (data.topic || "").trim();
