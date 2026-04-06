@@ -1,4 +1,5 @@
 from datetime import datetime, date, timedelta
+import re
 from django.db import models
 from django.utils import timezone
 import logging
@@ -17,6 +18,19 @@ class Speaker(models.Model):
     initial_time_limit = models.DurationField(
         default=timedelta(seconds=300), verbose_name="Изначальное время (ЧЧ:ММ:СС)"
     )
+
+    @staticmethod
+    def _collapse_initials_spacing(value: str) -> str:
+        if not value:
+            return value
+
+        normalized = " ".join(value.split())
+        match = re.fullmatch(r"([^\s]+)\s+([A-Za-zА-Яа-яЁё])\.\s*([A-Za-zА-Яа-яЁё])\.?", normalized)
+        if not match:
+            return normalized
+
+        surname, first_initial, second_initial = match.groups()
+        return f"{surname.capitalize()} {first_initial.upper()}.{second_initial.upper()}."
 
     @property
     def time_limit_seconds(self):
@@ -41,15 +55,20 @@ class Speaker(models.Model):
 
     @property
     def formatted_name(self):
-        parts = [
-            part.strip().capitalize() for part in self.full_name.split() if part.strip()
-        ]
-
-        return " ".join(parts)
+        return self._normalize_text(self.full_name)
 
     @property
     def short_name(self):
-        parts = [part for part in self.full_name.split() if part.strip()]
+        normalized_name = self._normalize_text(self.full_name)
+        compact_match = re.fullmatch(
+            r"([^\s]+)\s+([A-Za-zА-Яа-яЁё])\.([A-Za-zА-Яа-яЁё])\.",
+            normalized_name,
+        )
+        if compact_match:
+            surname, first_initial, second_initial = compact_match.groups()
+            return f"{surname} {first_initial.upper()}.{second_initial.upper()}."
+
+        parts = [part for part in normalized_name.split() if part.strip()]
         if not parts:
             return ""
         surname = parts[0].capitalize()
@@ -64,7 +83,10 @@ class Speaker(models.Model):
     def _normalize_text(s: str) -> str:
         if not s:
             return s
-        return " ".join(s.split()).title()
+        collapsed = Speaker._collapse_initials_spacing(s)
+        if re.fullmatch(r"([^\s]+)\s+[A-Za-zА-ЯЁ]\.[A-Za-zА-ЯЁ]\.", collapsed, flags=re.IGNORECASE):
+            return collapsed
+        return collapsed.title()
 
     def save(
         self,

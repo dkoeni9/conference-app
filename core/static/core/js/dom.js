@@ -63,7 +63,13 @@ export function updateSpeakerItemStyles() {
 // Presentation Screen
 
 export function formatSpeakerName(fullName) {
-    const parts = (fullName || "").trim().split(/\s+/).filter(Boolean);
+    const normalizedName = (fullName || "")
+        .trim()
+        .replace(/^([^\s]+)\s+([A-Za-zА-Яа-яЁё])\.\s*([A-Za-zА-Яа-яЁё])\.?$/u, (_, surname, firstInitial, secondInitial) => (
+            `${surname.charAt(0).toUpperCase()}${surname.slice(1).toLowerCase()} ${firstInitial.toUpperCase()}.${secondInitial.toUpperCase()}.`
+        ));
+
+    const parts = normalizedName.split(/\s+/).filter(Boolean);
     if (!parts.length) return "-";
     if (parts.length >= 3) {
         const [firstWord, ...rest] = parts;
